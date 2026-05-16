@@ -1,148 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>A&S Store Order System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A&S Store - Premium Printing Services</title>
 
-<style>
-body {
-    font-family: Arial;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.container {
-    max-width: 500px;
-    margin: 40px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #111827);
+      color: #fff;
+      overflow-x: hidden;
+    }
 
-h2 { text-align: center; }
+    /* ANIMATED BACKGROUND GLOW */
+    body::before {
+      content: "";
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      background: #00aaff;
+      filter: blur(140px);
+      opacity: 0.25;
+      top: -100px;
+      left: -100px;
+      animation: floatGlow 8s infinite alternate;
+    }
 
-input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+    body::after {
+      content: "";
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      background: #ff00cc;
+      filter: blur(160px);
+      opacity: 0.15;
+      bottom: -120px;
+      right: -120px;
+      animation: floatGlow2 10s infinite alternate;
+    }
 
-button {
-    width: 100%;
-    padding: 12px;
-    background: #1877F2;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-}
+    @keyframes floatGlow {
+      from { transform: translate(0,0); }
+      to { transform: translate(60px,40px); }
+    }
 
-button:hover {
-    background: #0f5bd3;
-}
+    @keyframes floatGlow2 {
+      from { transform: translate(0,0); }
+      to { transform: translate(-60px,-40px); }
+    }
 
-#status {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-}
-</style>
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(15px);
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      z-index: 1000;
+    }
+
+    .logo {
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    nav a {
+      color: #fff;
+      margin: 0 12px;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      opacity: 1;
+      color: #00aaff;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 100px 20px;
+      animation: fadeIn 1s ease;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      animation: slideUp 1s ease;
+    }
+
+    .hero p {
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
+    /* BUTTONS */
+    .btn {
+      padding: 14px 22px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+      margin: 6px;
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #00aaff, #0066ff);
+      color: white;
+      box-shadow: 0 0 20px rgba(0,170,255,0.3);
+    }
+
+    .primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(0,170,255,0.6);
+    }
+
+    .glass-btn {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .glass-btn:hover {
+      transform: scale(1.05);
+      border-color: #00aaff;
+    }
+
+    /* SECTIONS */
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 22px;
+      margin: 15px 0;
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      transition: 0.3s;
+      animation: fadeIn 1s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: #00aaff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    /* FLOATING BUTTON */
+    .floating {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #00aaff, #0066ff);
+      color: white;
+      padding: 14px 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(0,170,255,0.5);
+      animation: pulse 2s infinite;
+      z-index: 999;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      opacity: 0.6;
+      font-size: 14px;
+    }
+  </style>
 </head>
 
 <body>
 
+<header>
+  <div class="logo">A&S Store</div>
+
+  <nav>
+    <a href="#pricing">Pricing</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <button class="btn glass-btn" onclick="openMessenger()">Message</button>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Premium Printing Services</h1>
+  <p>Xerox • ID • Stickers • Rush Printing</p>
+
+  <button class="btn primary" onclick="openMessenger()">
+    💬 Message Us Now
+  </button>
+
+  <button class="btn glass-btn" onclick="scrollToPricing()">
+    View Pricing
+  </button>
+</div>
+
+<!-- HOW -->
 <div class="container">
-    <h2>A&S Store Order Form</h2>
+  <div class="card">
+    <h2>📌 How it Works</h2>
+    <p>1. Message us</p>
+    <p>2. Send file + details</p>
+    <p>3. Get price confirmation</p>
+    <p>4. Pay via GCash</p>
+    <p>5. Print & release</p>
+  </div>
+</div>
 
-    <input type="text" id="name" placeholder="Customer Name">
+<!-- PRICING -->
+<div class="container" id="pricing">
+  <div class="card">
+    <h2>💰 Pricing</h2>
 
-    <select id="service">
-        <option>Black & White Print</option>
-        <option>Colored Print</option>
-        <option>Sticker Printing</option>
-        <option>ID Picture</option>
-        <option>Others</option>
-    </select>
+    <div class="grid">
+      <div class="card">Xerox<br>₱5 BW / ₱12 Color</div>
+      <div class="card">ID Photo<br>₱50 - ₱120</div>
+      <div class="card">Sticker<br>₱10+</div>
+    </div>
+  </div>
+</div>
 
-    <input type="number" id="qty" placeholder="Quantity">
+<!-- CONTACT -->
+<div class="container" id="contact">
+  <div class="card">
+    <h2>📩 Contact Us</h2>
+    <p>Fast reply on Messenger</p>
 
-    <textarea id="details" rows="4" placeholder="Details / Instructions"></textarea>
+    <button class="btn primary" onclick="openMessenger()">
+      Open Messenger
+    </button>
+  </div>
+</div>
 
-    <input type="file" id="fileUpload">
+<footer>
+  © 2026 A&S Store
+</footer>
 
-    <button onclick="sendOrder()">Send via Messenger</button>
-
-    <div id="status"></div>
+<div class="floating" onclick="openMessenger()">
+  💬 Chat
 </div>
 
 <script>
-async function uploadFile(file) {
-    let formData = new FormData();
-    formData.append("image", file); // MUST be "image"
-
-    let apiKey = "23cbe92d4e2eb9d2a68ec21cc9f2a6f6";
-
-    let response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-        method: "POST",
-        body: formData
-    });
-
-    let data = await response.json();
-
-    if (data.success) {
-        return data.data.url;
-    } else {
-        console.log(data);
-        throw new Error("Upload failed");
-    }
+function openMessenger() {
+  window.open("https://m.me/ASStoreOfficial", "_blank");
 }
 
-async function sendOrder() {
-    let name = document.getElementById("name").value;
-    let service = document.getElementById("service").value;
-    let qty = document.getElementById("qty").value;
-    let details = document.getElementById("details").value;
-    let file = document.getElementById("fileUpload").files[0];
-
-    let status = document.getElementById("status");
-    status.innerHTML = "Uploading file...";
-
-    let fileLink = "";
-
-    if (file) {
-        try {
-            fileLink = await uploadFile(file);
-        } catch (err) {
-            status.innerHTML = "Upload failed. Try again.";
-            return;
-        }
-    }
-
-    status.innerHTML = "Opening Messenger...";
-
-    let message =
-`Hello A&S Store!
-
-New Order:
-
-Name: ${name}
-Service: ${service}
-Quantity: ${qty}
-Details: ${details}
-File: ${fileLink ? fileLink : "No file uploaded"}`;
-
-    let encoded = encodeURIComponent(message);
-
-    let page = "asmamburao";
-
-    window.open(`https://m.me/${page}?text=${encoded}`, "_blank");
-
-    status.innerHTML = "Done!";
+function scrollToPricing() {
+  document.getElementById("pricing").scrollIntoView({ behavior: "smooth" });
 }
 </script>
 
