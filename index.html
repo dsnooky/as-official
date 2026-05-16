@@ -283,7 +283,16 @@
 
 <script>
 function openMessenger() {
-  window.open("https://m.me/asmamburao", "_blank");
+  const url = "https://www.messenger.com/t/asmamburao";
+  const fallback = "https://m.me/asmamburao";
+
+  const win = window.open(url, "_blank");
+
+  setTimeout(() => {
+    if (!win || win.closed) {
+      window.open(fallback, "_blank");
+    }
+  }, 500);
 }
 
 function scrollToPricing() {
