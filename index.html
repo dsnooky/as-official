@@ -12,6 +12,7 @@
       background: #0f172a;
       color: #fff;
       scroll-behavior: smooth;
+      overflow-x: hidden;
     }
 
     /* HEADER */
@@ -45,21 +46,69 @@
       color: #00aaff;
     }
 
-    /* HERO */
+    /* CINEMATIC HERO */
     .hero {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 90px 20px;
+      overflow: hidden;
+    }
+
+    /* ZOOM + BLUR ANIMATION LAYERS */
+    .hero video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 120%;
+      min-height: 120%;
+      transform: translate(-50%, -50%) scale(1);
+      object-fit: cover;
+      z-index: -2;
+      animation: zoomBlur 12s infinite alternate ease-in-out;
+      filter: blur(0px) brightness(0.9);
+    }
+
+    @keyframes zoomBlur {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        filter: blur(0px) brightness(0.9);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.15);
+        filter: blur(2px) brightness(0.7);
+      }
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(0,170,255,0.25), rgba(0,0,0,0.85));
+      z-index: -1;
+    }
+
+    .hero-content {
+      z-index: 2;
+      padding: 20px;
+      animation: fadeInUp 1s ease;
     }
 
     .hero h1 {
-      font-size: 42px;
+      font-size: 48px;
       margin-bottom: 10px;
+      letter-spacing: 1px;
     }
 
     .hero p {
-      opacity: 0.8;
+      opacity: 0.85;
+      margin-bottom: 20px;
     }
 
+    /* BUTTONS */
     .btn {
       padding: 14px 20px;
       border: none;
@@ -99,6 +148,14 @@
       margin: 15px 0;
       border-radius: 14px;
       backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s ease;
+    }
+
+    .card.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .grid {
@@ -119,12 +176,18 @@
       cursor: pointer;
       box-shadow: 0 0 20px rgba(0,170,255,0.5);
       animation: pulse 2s infinite;
+      z-index: 999;
     }
 
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.1); }
       100% { transform: scale(1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     footer {
@@ -137,7 +200,6 @@
 
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo">A&S Store</div>
 
@@ -149,27 +211,29 @@
   <button class="btn glass" onclick="openMessenger()">Message</button>
 </header>
 
-<!-- HERO -->
+<!-- CINEMATIC HERO -->
 <section class="hero">
-  <h1>Fast & Affordable Printing</h1>
-  <p>Xerox • ID • Stickers • Rush Printing</p>
 
-  <button class="btn primary" onclick="openMessenger()">
-    💬 Message Us Now
-  </button>
+  <video autoplay muted loop playsinline>
+    <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
+  </video>
 
-  <button class="btn glass" onclick="scrollToPricing()">
-    View Pricing
-  </button>
+  <div class="hero-content">
+    <h1>Premium Printing Services</h1>
+    <p>Xerox • ID • Stickers • Rush Printing</p>
+
+    <button class="btn primary" onclick="openMessenger()">💬 Message Us Now</button>
+    <button class="btn glass" onclick="scrollToPricing()">View Pricing</button>
+  </div>
 </section>
 
 <!-- HOW IT WORKS -->
 <div class="container">
   <div class="card">
     <h2>📌 How it Works</h2>
-    <p>1. Click Message Us</p>
-    <p>2. Send your file on Messenger</p>
-    <p>3. We reply with price</p>
+    <p>1. Message us</p>
+    <p>2. Send file + details</p>
+    <p>3. We confirm price</p>
     <p>4. Pay via GCash</p>
     <p>5. Print & release</p>
   </div>
@@ -192,42 +256,41 @@
 <div class="container" id="contact">
   <div class="card" style="text-align:center;">
     <h2>📩 Contact Us</h2>
-    <p>We reply fast on Messenger</p>
+    <p>Message us on Messenger for fast response</p>
 
-    <button class="btn primary" onclick="openMessenger()">
-      Open Messenger
-    </button>
+    <button class="btn primary" onclick="openMessenger()">Open Messenger</button>
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   © 2026 A&S Store
 </footer>
 
-<!-- FLOATING CHAT -->
-<div class="floating" onclick="openMessenger()">
-  💬 Chat
-</div>
+<div class="floating" onclick="openMessenger()">💬 Chat</div>
 
 <script>
 function openMessenger() {
-  const url1 = "https://www.messenger.com/t/asmamburao";
-  const url2 = "https://m.me/asmamburao";
-
-  const win = window.open(url1, "_blank");
-
-  setTimeout(() => {
-    if (!win || win.closed) {
-      window.open(url2, "_blank");
-    }
-  }, 500);
+  window.open("https://www.messenger.com/t/asmamburao", "_blank");
 }
 
 function scrollToPricing() {
   document.getElementById("pricing").scrollIntoView({ behavior: "smooth" });
 }
+
+// SCROLL ANIMATION
+const cards = document.querySelectorAll('.card');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show');
+    }
+  });
+}, { threshold: 0.15 });
+
+cards.forEach(card => observer.observe(card));
 </script>
 
 </body>
 </html>
+
