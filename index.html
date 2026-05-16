@@ -1,138 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>A&S Store - Order System</title>
+<meta charset="UTF-8">
+<title>A&S Store Order System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f6f8;
-      color: #111;
-    }
+<style>
+body {
+    font-family: Arial;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
 
-    header {
-      padding: 18px 22px;
-      background: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-    }
+.container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
 
-    .hero {
-      text-align: center;
-      padding: 60px 20px;
-    }
+h2 { text-align: center; }
 
-    .btn {
-      padding: 12px 18px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      margin: 5px;
-      font-size: 15px;
-    }
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
-    .primary { background: #0084ff; color: white; }
-    .black { background: black; color: white; }
+button {
+    width: 100%;
+    padding: 12px;
+    background: #1877F2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-    }
+button:hover {
+    background: #0f5bd3;
+}
 
-    .card {
-      background: white;
-      padding: 16px;
-      margin: 12px 0;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-  </style>
+#status {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <h2>A&S Store</h2>
-  <button class="btn black" onclick="openMessenger()">Contact</button>
-</header>
-
-<div class="hero">
-  <h1>Fast & Affordable Printing Services</h1>
-  <p>Xerox • ID Pictures • Stickers • Rush Printing</p>
-
-  <button class="btn primary" onclick="sendOrder()">
-    💬 Send Order & Open Messenger
-  </button>
-
-  <p style="color:gray;">
-    Click → Save Order → Open Messenger
-  </p>
-</div>
-
 <div class="container">
+    <h2>A&S Store Order Form</h2>
 
-  <div class="card">
-    <h3>💰 Price List</h3>
-    <p>Xerox: ₱5 BW / ₱7 Color</p>
-    <p>ID Picture: ₱45 - ₱65</p>
-    <p>Sticker: ₱20+</p>
-  </div>
+    <input type="text" id="name" placeholder="Customer Name">
 
-  <div class="card">
-    <h3>💳 Payment</h3>
-    <p><b>GCash:</b> 0954-089-1929</p>
-  </div>
+    <select id="service">
+        <option>Black & White Print</option>
+        <option>Colored Print</option>
+        <option>Sticker Printing</option>
+        <option>ID Picture</option>
+        <option>Others</option>
+    </select>
 
+    <input type="number" id="qty" placeholder="Quantity">
+
+    <textarea id="details" rows="4" placeholder="Details / Instructions"></textarea>
+
+    <input type="file" id="fileUpload">
+
+    <button onclick="sendOrder()">Send via Messenger</button>
+
+    <div id="status"></div>
 </div>
 
 <script>
+async function uploadFile(file) {
+    let formData = new FormData();
+    formData.append("image", file);
 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBJrxACWaFUuAw8gfmFEr2sfnRatsgPDNopAb-Doi5_hfbKGcUXhuWNGn8WTLNUUm38g/exec"; // leave blank if not ready yet
+    let response = await fetch("https://api.imgbb.com/1/upload?key=YOUR_IMGBB_API_KEY", {
+        method: "POST",
+        body: formData
+    });
 
-function sendOrder() {
-
-  const orderData = {
-    customer: "Walk-in Customer",
-    file: "No file uploaded",
-    type: "BW",
-    pages: 1,
-    total: 5,
-    time: new Date().toISOString()
-  };
-
-  // 1. Send to Google Sheets (ONLY if URL exists)
-  if (GOOGLE_SCRIPT_URL) {
-    fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(orderData)
-    })
-    .then(res => console.log("Saved to Sheets"))
-    .catch(err => console.log("Sheet Error:", err));
-  }
-
-  // 2. ALWAYS OPEN MESSENGER (this is the important fix)
-  const msg = encodeURIComponent(
-    `A&S Store Order:\nFile: ${orderData.file}\nPages: ${orderData.pages}\nTotal: ₱${orderData.total}`
-  );
-
-  window.open("https://m.me/asmamburao?text=" + msg, "_blank");
+    let data = await response.json();
+    return data.data.url;
 }
 
-function openMessenger() {
-  window.open("https://m.me/asmamburao", "_blank");
-}
+async function sendOrder() {
+    let name = document.getElementById("name").value;
+    let service = document.getElementById("service").value;
+    let qty = document.getElementById("qty").value;
+    let details = document.getElementById("details").value;
+    let file = document.getElementById("fileUpload").files[0];
 
+    let status = document.getElementById("status");
+    status.innerHTML = "Uploading file...";
+
+    let fileLink = "";
+
+    if (file) {
+        try {
+            fileLink = await uploadFile(file);
+        } catch (err) {
+            status.innerHTML = "Upload failed. Try again.";
+            return;
+        }
+    }
+
+    status.innerHTML = "Opening Messenger...";
+
+    let message =
+`Hello A&S Store!
+
+New Order:
+
+Name: ${name}
+Service: ${service}
+Quantity: ${qty}
+Details: ${details}
+File: ${fileLink ? fileLink : "No file uploaded"}`;
+
+    let encoded = encodeURIComponent(message);
+
+    let page = "asmamburao";
+
+    window.open(`https://m.me/${page}?text=${encoded}`, "_blank");
+
+    status.innerHTML = "Done!";
+}
 </script>
 
 </body>
