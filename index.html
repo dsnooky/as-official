@@ -3,73 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A&S Store - Printing Services</title>
+  <title>A&S Store - Full Printing System</title>
 
+  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  </script>
+
+  <!-- jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      background: linear-gradient(to bottom right, #ffffff, #f3f4f6);
+      background: #f5f6f8;
       color: #111;
     }
 
     header {
       display: flex;
       justify-content: space-between;
-      padding: 20px;
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(10px);
+      padding: 18px 24px;
+      background: white;
       position: sticky;
       top: 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-
-    h1 { margin: 0; }
 
     .hero {
       text-align: center;
-      padding: 60px 20px;
+      padding: 50px 20px;
     }
 
     .btn {
-      padding: 12px 18px;
+      padding: 10px 16px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
       margin: 5px;
-      border-radius: 8px;
     }
 
     .primary { background: black; color: white; }
-    .outline { border: 1px solid #333; background: transparent; }
     .green { background: #16a34a; color: white; }
+    .outline { border: 1px solid #333; background: transparent; }
 
-    .section {
+    .container {
+      max-width: 900px;
+      margin: auto;
       padding: 20px;
-      text-align: center;
     }
 
     .card {
       background: white;
       padding: 15px;
-      margin: 10px;
       border-radius: 10px;
-      display: inline-block;
-      width: 250px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      margin-top: 15px;
     }
 
     input[type=file] {
       display: none;
     }
 
-    .upload-label {
-      display: inline-block;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
     }
 
     .price {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: bold;
       color: green;
     }
@@ -78,104 +83,148 @@
       width: 180px;
       margin-top: 10px;
     }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
   </style>
 </head>
 
 <body>
 
 <header>
-  <h1>A&S Store</h1>
-  <button class="btn outline">Contact</button>
+  <h2>A&S Store</h2>
+  <button class="btn outline" onclick="openMessenger()">Contact</button>
 </header>
 
 <div class="hero">
-  <h2>Fast & Affordable Printing Services</h2>
+  <h1>Fast & Affordable Printing Services</h1>
   <p>Xerox • ID Pictures • Stickers • Rush Printing</p>
 
-  <button class="btn primary" onclick="openMessenger()">Message Us</button>
+  <div class="row">
+    <button class="btn primary" onclick="openMessenger()">Message Us</button>
 
-  <label class="upload-label">
-    <input type="file" id="fileInput" onchange="handleFile(event)" />
-    <button class="btn outline">Upload File</button>
-  </label>
+    <label>
+      <input type="file" id="fileInput" onchange="handleFile(event)" />
+      <button class="btn outline">Upload File</button>
+    </label>
+  </div>
 </div>
 
-<div class="section" id="result" style="display:none;">
-  <h3>Smart Estimate</h3>
-  <p id="fileName"></p>
-  <p id="pages"></p>
-  <p class="price" id="price"></p>
+<div class="container">
 
-  <button class="btn green" onclick="sendMessenger()">Send to Store</button>
-  <button class="btn outline" onclick="downloadReceipt()">Download Receipt</button>
-</div>
+  <!-- ORDER SUMMARY -->
+  <div class="card" id="orderBox" style="display:none;">
+    <h3>Live Order Summary</h3>
+    <p id="fileName"></p>
+    <p id="pages"></p>
+    <p id="bw"></p>
+    <p id="color"></p>
+    <p class="price" id="total"></p>
 
-<div class="section">
-  <h3>Payment</h3>
-  <p>GCash: 09XX-XXX-XXXX</p>
-  <img src="gcash_qr.png" class="qr" alt="GCash QR" />
-  <p>Scan QR or send payment to confirm order</p>
+    <div class="row">
+      <button class="btn green" onclick="sendMessenger()">Send Order</button>
+      <button class="btn outline" onclick="downloadReceipt()">Download Receipt</button>
+    </div>
+  </div>
+
+  <!-- PRICE LIST -->
+  <div class="card">
+    <h3>Price List</h3>
+    <div class="grid">
+      <div class="card">Xerox: ₱5 BW / ₱12 Color</div>
+      <div class="card">ID Picture: ₱50 - ₱120</div>
+      <div class="card">Sticker: ₱10+</div>
+    </div>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="card">
+    <h3>GCash Payment</h3>
+    <p>Send payment to confirm order</p>
+    <p><b>GCash #: 09XX-XXX-XXXX</b></p>
+    <img src="gcash_qr.png" class="qr" />
+  </div>
+
 </div>
 
 <script>
-let selectedFile = null;
-let pages = 1;
-let price = 0;
+let fileData = null;
+let pages = 0;
+let bwPages = 0;
+let colorPages = 0;
 
 const bwRate = 5;
 const colorRate = 12;
 
-function openMessenger() {
-  window.open("https://m.me/ASStoreOfficial", "_blank");
+function openMessenger(){
+  window.open("https://m.me/ASStoreOfficial","_blank");
 }
 
-async function handleFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+async function handleFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
 
-  selectedFile = file;
+  fileData = file;
 
-  const fileName = file.name.toLowerCase();
-
-  if (!fileName.endsWith(".pdf")) {
+  if(!file.name.endsWith(".pdf")){
     pages = 1;
-    price = bwRate;
-    showResult(file.name);
+    bwPages = 1;
+    colorPages = 0;
+    updateUI();
     return;
   }
 
   const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pdf = await pdfjsLib.getDocument({data:arrayBuffer}).promise;
 
   pages = pdf.numPages;
-  price = pages * bwRate;
 
-  showResult(file.name);
+  // simple assumption: default BW only
+  bwPages = pages;
+  colorPages = 0;
+
+  updateUI();
 }
 
-function showResult(name) {
-  document.getElementById("result").style.display = "block";
-  document.getElementById("fileName").innerText = "File: " + name;
-  document.getElementById("pages").innerText = "Pages: " + pages;
-  document.getElementById("price").innerText = "₱" + price;
+function updateUI(){
+  const total = (bwPages * bwRate) + (colorPages * colorRate);
+
+  document.getElementById("orderBox").style.display = "block";
+  document.getElementById("fileName").innerText = "File: " + fileData.name;
+  document.getElementById("pages").innerText = "Total Pages: " + pages;
+  document.getElementById("bw").innerText = "Black & White Pages: " + bwPages;
+  document.getElementById("color").innerText = "Color Pages: " + colorPages;
+  document.getElementById("total").innerText = "Total: ₱" + total;
 }
 
-function sendMessenger() {
+function sendMessenger(){
+  const total = (bwPages * bwRate) + (colorPages * colorRate);
+
   const msg = encodeURIComponent(
-    `Hello A&S Store\nFile: ${selectedFile.name}\nPages: ${pages}\nPrice: ₱${price}`
+    `A&S Store Order:\nFile: ${fileData.name}\nPages: ${pages}\nBW: ${bwPages}\nColor: ${colorPages}\nTotal: ₱${total}`
   );
-  window.open("https://m.me/ASStoreOfficial?text=" + msg, "_blank");
+
+  window.open("https://m.me/ASStoreOfficial?text="+msg,"_blank");
 }
 
-function downloadReceipt() {
+function downloadReceipt(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
+  const total = (bwPages * bwRate) + (colorPages * colorRate);
+
   doc.text("A&S Store Receipt", 20, 20);
-  doc.text("File: " + selectedFile.name, 20, 40);
+  doc.text("File: " + fileData.name, 20, 40);
   doc.text("Pages: " + pages, 20, 50);
-  doc.text("Total: ₱" + price, 20, 60);
-  doc.save("receipt.pdf");
+  doc.text("BW: " + bwPages, 20, 60);
+  doc.text("Color: " + colorPages, 20, 70);
+  doc.text("Total: ₱" + total, 20, 80);
+
+  doc.save("A&S_Receipt.pdf");
 }
 </script>
 
