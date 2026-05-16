@@ -1,296 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>A&S Store - Printing Services</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A&S Store Printing System</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #fff;
-      scroll-behavior: smooth;
-      overflow-x: hidden;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+}
 
-    /* HEADER */
-    header {
-      position: sticky;
-      top: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      z-index: 1000;
-    }
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+}
 
-    .logo {
-      font-weight: bold;
-      font-size: 18px;
-    }
+/* HERO */
+.hero {
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(120deg,#0f172a,#1e3a8a);
+}
 
-    nav a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-      opacity: 0.8;
-    }
+/* BUTTON */
+.btn {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.primary { background:#00aaff; color:white; }
 
-    nav a:hover {
-      opacity: 1;
-      color: #00aaff;
-    }
+/* PRICING CARDS */
+.container { padding:20px; max-width:900px; margin:auto; }
 
-    /* CINEMATIC HERO */
-    .hero {
-      position: relative;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      overflow: hidden;
-    }
+.card {
+  background: rgba(255,255,255,0.05);
+  padding: 18px;
+  border-radius: 12px;
+  margin: 12px 0;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: 0.3s;
+}
 
-    /* ZOOM + BLUR ANIMATION LAYERS */
-    .hero video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      min-width: 120%;
-      min-height: 120%;
-      transform: translate(-50%, -50%) scale(1);
-      object-fit: cover;
-      z-index: -2;
-      animation: zoomBlur 12s infinite alternate ease-in-out;
-      filter: blur(0px) brightness(0.9);
-    }
+.card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 25px rgba(0,170,255,0.35);
+}
 
-    @keyframes zoomBlur {
-      0% {
-        transform: translate(-50%, -50%) scale(1);
-        filter: blur(0px) brightness(0.9);
-      }
-      100% {
-        transform: translate(-50%, -50%) scale(1.15);
-        filter: blur(2px) brightness(0.7);
-      }
-    }
+/* CALCULATOR */
+.calc {
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 12px;
+}
 
-    .hero::before {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at center, rgba(0,170,255,0.25), rgba(0,0,0,0.85));
-      z-index: -1;
-    }
+select, input {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 6px;
+}
 
-    .hero-content {
-      z-index: 2;
-      padding: 20px;
-      animation: fadeInUp 1s ease;
-    }
-
-    .hero h1 {
-      font-size: 48px;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-    }
-
-    .hero p {
-      opacity: 0.85;
-      margin-bottom: 20px;
-    }
-
-    /* BUTTONS */
-    .btn {
-      padding: 14px 20px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      margin: 8px;
-      font-size: 16px;
-      transition: 0.3s;
-    }
-
-    .primary {
-      background: linear-gradient(135deg, #00aaff, #0066ff);
-      color: white;
-    }
-
-    .glass {
-      background: rgba(255,255,255,0.1);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .btn:hover {
-      transform: scale(1.05);
-    }
-
-    /* SECTIONS */
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 18px;
-      margin: 15px 0;
-      border-radius: 14px;
-      backdrop-filter: blur(10px);
-      opacity: 0;
-      transform: translateY(40px);
-      transition: all 0.8s ease;
-    }
-
-    .card.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-    }
-
-    /* FLOAT BUTTON */
-    .floating {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #00aaff;
-      color: white;
-      padding: 14px 18px;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(0,170,255,0.5);
-      animation: pulse 2s infinite;
-      z-index: 999;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    footer {
-      text-align: center;
-      padding: 25px;
-      opacity: 0.6;
-    }
-  </style>
+/* FLOAT */
+.floating {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #00aaff;
+  padding: 14px;
+  border-radius: 50px;
+  cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="logo">A&S Store</div>
-
-  <nav>
-    <a href="#pricing">Pricing</a>
-    <a href="#contact">Contact</a>
-  </nav>
-
-  <button class="btn glass" onclick="openMessenger()">Message</button>
+<div><b>A&S Store</b></div>
+<nav>
+<a href="#pricing">Pricing</a>
+<a href="#calc">Calculator</a>
+</nav>
 </header>
 
-<!-- CINEMATIC HERO -->
-<section class="hero">
-
-  <video autoplay muted loop playsinline>
-    <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
-  </video>
-
-  <div class="hero-content">
-    <h1>Premium Printing Services</h1>
-    <p>Xerox • ID • Stickers • Rush Printing</p>
-
-    <button class="btn primary" onclick="openMessenger()">💬 Message Us Now</button>
-    <button class="btn glass" onclick="scrollToPricing()">View Pricing</button>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<div class="container">
-  <div class="card">
-    <h2>📌 How it Works</h2>
-    <p>1. Message us</p>
-    <p>2. Send file + details</p>
-    <p>3. We confirm price</p>
-    <p>4. Pay via GCash</p>
-    <p>5. Print & release</p>
-  </div>
+<!-- HERO -->
+<div class="hero">
+<div>
+<h1>Printing Services</h1>
+<p>Xerox • Color • Rush Printing</p>
+<button class="btn primary" onclick="openMessenger()">Message Us</button>
+</div>
 </div>
 
 <!-- PRICING -->
 <div class="container" id="pricing">
-  <div class="card">
-    <h2>💰 Pricing</h2>
 
-    <div class="grid">
-      <div class="card">Xerox<br>₱5 BW / ₱12 Color</div>
-      <div class="card">ID Picture<br>₱50 - ₱120</div>
-      <div class="card">Sticker<br>₱10+</div>
-    </div>
-  </div>
+<div class="card">
+<h2>📌 Pricing Updated</h2>
+
+<b>XEROX / PRINT (B&W)</b><br>
+SHORT/A4: ₱5 / ₱7 / ₱10<br>
+LONG: ₱6 / ₱8 / ₱12<br>
++ ₱2 back-to-back<br><br>
+
+<b>COLOR PRINT</b><br>
+SHORT/A4: ₱7 / ₱15 / ₱20<br>
+LONG: ₱8 / ₱18 / ₱22<br>
++ ₱3 back-to-back
 </div>
 
-<!-- CONTACT -->
-<div class="container" id="contact">
-  <div class="card" style="text-align:center;">
-    <h2>📩 Contact Us</h2>
-    <p>Message us on Messenger for fast response</p>
-
-    <button class="btn primary" onclick="openMessenger()">Open Messenger</button>
-  </div>
 </div>
 
-<footer>
-  © 2026 A&S Store
-</footer>
+<!-- CALCULATOR -->
+<div class="container" id="calc">
 
-<div class="floating" onclick="openMessenger()">💬 Chat</div>
+<div class="calc card">
+<h2>🧮 Auto Price Calculator</h2>
+
+<select id="type">
+<option value="bw">Black & White</option>
+<option value="color">Color</option>
+</select>
+
+<select id="page">
+<option value="short">Short / A4</option>
+<option value="long">Long</option>
+</select>
+
+<select id="content">
+<option value="text">Text Only</option>
+<option value="mix">Text + Image</option>
+<option value="full">Full Image</option>
+</select>
+
+<label>
+<input type="checkbox" id="rush"> Rush Print (+₱5)
+</label>
+
+<label>
+<input type="checkbox" id="back"> Back-to-back
+</label>
+
+<h2>Total: ₱<span id="total">0</span></h2>
+
+<button class="btn primary" onclick="openMessenger()">Order via Messenger</button>
+</div>
+
+</div>
+
+<div class="floating" onclick="openMessenger()">Chat</div>
 
 <script>
-function openMessenger() {
-  window.open("https://www.messenger.com/t/asmamburao", "_blank");
+
+const typeEl = document.getElementById("type");
+const pageEl = document.getElementById("page");
+const contentEl = document.getElementById("content");
+const rushEl = document.getElementById("rush");
+const backEl = document.getElementById("back");
+const totalEl = document.getElementById("total");
+
+function calc(){
+
+let price = 0;
+let type = typeEl.value;
+let page = pageEl.value;
+let content = contentEl.value;
+
+if(type === "bw"){
+  if(page === "short"){
+    price = content==="text"?5:content==="mix"?7:10;
+  } else {
+    price = content==="text"?6:content==="mix"?8:12;
+  }
+  if(backEl.checked) price += 2;
 }
 
-function scrollToPricing() {
-  document.getElementById("pricing").scrollIntoView({ behavior: "smooth" });
+if(type === "color"){
+  if(page === "short"){
+    price = content==="text"?7:content==="mix"?15:20;
+  } else {
+    price = content==="text"?8:content==="mix"?18:22;
+  }
+  if(backEl.checked) price += 3;
 }
 
-// SCROLL ANIMATION
-const cards = document.querySelectorAll('.card');
+if(rushEl.checked) price += 5;
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('show');
-    }
-  });
-}, { threshold: 0.15 });
+totalEl.innerText = price;
 
-cards.forEach(card => observer.observe(card));
+}
+
+[typeEl,pageEl,contentEl,rushEl,backEl].forEach(e=>{
+e.addEventListener("change",calc);
+});
+
+function openMessenger(){
+window.open("https://www.messenger.com/t/asmamburao","_blank");
+}
+
+calc();
+
 </script>
 
 </body>
 </html>
-
