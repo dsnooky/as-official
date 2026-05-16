@@ -1,166 +1,183 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { Upload } from "lucide-react";
-import * as pdfjsLib from "pdfjs-dist";
-import jsPDF from "jspdf";
-import QRCode from "react-qr-code";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A&S Store - Printing Services</title>
 
-const MESSENGER_LINK = "https://m.me/ASStoreOfficial";
-const GCASH_NAME = "A&S Store";
-const GCASH_NUMBER = "09XXXXXXXXX";
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-export default function ASStoreLandingPage() {
-  const [file, setFile] = useState(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [bwPages, setBwPages] = useState(0);
-  const [colorPages, setColorPages] = useState(0);
-  const [price, setPrice] = useState(0);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [paymentRef, setPaymentRef] = useState("");
-
-  useEffect(() => {
-    const opened = sessionStorage.getItem("m_open");
-    if (!opened) {
-      sessionStorage.setItem("m_open", "1");
-      window.open(MESSENGER_LINK, "_blank");
-    }
-  }, []);
-
-  const pricePerBW = 5;
-  const pricePerColor = 12;
-
-  const computePrice = (bw, color) => bw * pricePerBW + color * pricePerColor;
-
-  const detectColor = (img) => {
-    const d = img.data;
-    for (let i = 0; i < d.length; i += 50) {
-      if (Math.abs(d[i] - d[i + 1]) > 10 || Math.abs(d[i + 1] - d[i + 2]) > 10) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const analyzePDF = async (file) => {
-    setAnalyzing(true);
-    const buffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-
-    let bw = 0;
-    let color = 0;
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const viewport = page.getViewport({ scale: 0.6 });
-
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-
-      await page.render({ canvasContext: ctx, viewport }).promise;
-      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-      if (detectColor(img)) color++;
-      else bw++;
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(to bottom right, #ffffff, #f3f4f6);
+      color: #111;
     }
 
-    setBwPages(bw);
-    setColorPages(color);
-    setPageCount(pdf.numPages);
-    setPrice(computePrice(bw, color));
-    setAnalyzing(false);
-  };
-
-  const handleFile = async (e) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setFile(f);
-
-    if (!f.name.toLowerCase().endsWith(".pdf")) {
-      setBwPages(1);
-      setColorPages(0);
-      setPageCount(1);
-      setPrice(pricePerBW);
-      return;
+    header {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
     }
 
-    await analyzePDF(f);
-  };
+    h1 { margin: 0; }
 
-  const generateReceipt = () => {
-    const doc = new jsPDF();
-    doc.text("A&S STORE RECEIPT", 20, 20);
-    doc.text(`File: ${file?.name}`, 20, 40);
-    doc.text(`Pages: ${pageCount}`, 20, 50);
-    doc.text(`BW: ${bwPages} | Color: ${colorPages}`, 20, 60);
-    doc.text(`Total: ₱${price}`, 20, 70);
-    doc.save("receipt.pdf");
-  };
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+    }
 
-  const gcashMessage = encodeURIComponent(
-    `GCASH PAYMENT FOR A&S STORE\nName: ${GCASH_NAME}\nNumber: ${GCASH_NUMBER}\nAmount: ₱${price}\nRef: ${paymentRef || "N/A"}`
-  );
+    .btn {
+      padding: 12px 18px;
+      border: none;
+      cursor: pointer;
+      margin: 5px;
+      border-radius: 8px;
+    }
 
-  return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold">A&S STORE SYSTEM</h1>
+    .primary { background: black; color: white; }
+    .outline { border: 1px solid #333; background: transparent; }
+    .green { background: #16a34a; color: white; }
 
-      {/* Upload */}
-      <div className="mt-4">
-        <input type="file" onChange={handleFile} />
-      </div>
+    .section {
+      padding: 20px;
+      text-align: center;
+    }
 
-      {file && (
-        <Card className="mt-4">
-          <CardContent className="p-4">
-            <p>File: {file.name}</p>
-            <p>Pages: {pageCount}</p>
-            <p>BW: {bwPages} | Color: {colorPages}</p>
-            <p className="text-green-600 font-bold">Total: ₱{price}</p>
-            {analyzing && <p>Analyzing PDF...</p>}
-          </CardContent>
-        </Card>
-      )}
+    .card {
+      background: white;
+      padding: 15px;
+      margin: 10px;
+      border-radius: 10px;
+      display: inline-block;
+      width: 250px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-      {/* Payment Section */}
-      {file && (
-        <Card className="mt-4">
-          <CardContent className="p-4">
-            <h2 className="font-bold">GCASH PAYMENT</h2>
-            <p>{GCASH_NAME}</p>
-            <p>{GCASH_NUMBER}</p>
+    input[type=file] {
+      display: none;
+    }
 
-            <div className="mt-3 flex justify-center">
-              <QRCode value={`GCASH:${GCASH_NUMBER}|AMOUNT:${price}`} />
-            </div>
+    .upload-label {
+      display: inline-block;
+    }
 
-            <input
-              className="border p-2 mt-3 w-full"
-              placeholder="Enter GCASH Reference Number"
-              value={paymentRef}
-              onChange={(e) => setPaymentRef(e.target.value)}
-            />
+    .price {
+      font-size: 22px;
+      font-weight: bold;
+      color: green;
+    }
 
-            <Button
-              className="mt-3 w-full"
-              onClick={() => window.open(`https://m.me/ASStoreOfficial?text=${gcashMessage}`)}
-            >
-              Confirm Payment via Messenger
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+    .qr {
+      width: 180px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
 
-      {/* Receipt */}
-      {file && (
-        <Button className="mt-4" onClick={generateReceipt}>
-          Download Receipt
-        </Button>
-      )}
-    </div>
-  );
+<body>
+
+<header>
+  <h1>A&S Store</h1>
+  <button class="btn outline">Contact</button>
+</header>
+
+<div class="hero">
+  <h2>Fast & Affordable Printing Services</h2>
+  <p>Xerox • ID Pictures • Stickers • Rush Printing</p>
+
+  <button class="btn primary" onclick="openMessenger()">Message Us</button>
+
+  <label class="upload-label">
+    <input type="file" id="fileInput" onchange="handleFile(event)" />
+    <button class="btn outline">Upload File</button>
+  </label>
+</div>
+
+<div class="section" id="result" style="display:none;">
+  <h3>Smart Estimate</h3>
+  <p id="fileName"></p>
+  <p id="pages"></p>
+  <p class="price" id="price"></p>
+
+  <button class="btn green" onclick="sendMessenger()">Send to Store</button>
+  <button class="btn outline" onclick="downloadReceipt()">Download Receipt</button>
+</div>
+
+<div class="section">
+  <h3>Payment</h3>
+  <p>GCash: 09XX-XXX-XXXX</p>
+  <img src="gcash_qr.png" class="qr" alt="GCash QR" />
+  <p>Scan QR or send payment to confirm order</p>
+</div>
+
+<script>
+let selectedFile = null;
+let pages = 1;
+let price = 0;
+
+const bwRate = 5;
+const colorRate = 12;
+
+function openMessenger() {
+  window.open("https://m.me/ASStoreOfficial", "_blank");
 }
 
+async function handleFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  selectedFile = file;
+
+  const fileName = file.name.toLowerCase();
+
+  if (!fileName.endsWith(".pdf")) {
+    pages = 1;
+    price = bwRate;
+    showResult(file.name);
+    return;
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+  pages = pdf.numPages;
+  price = pages * bwRate;
+
+  showResult(file.name);
+}
+
+function showResult(name) {
+  document.getElementById("result").style.display = "block";
+  document.getElementById("fileName").innerText = "File: " + name;
+  document.getElementById("pages").innerText = "Pages: " + pages;
+  document.getElementById("price").innerText = "₱" + price;
+}
+
+function sendMessenger() {
+  const msg = encodeURIComponent(
+    `Hello A&S Store\nFile: ${selectedFile.name}\nPages: ${pages}\nPrice: ₱${price}`
+  );
+  window.open("https://m.me/ASStoreOfficial?text=" + msg, "_blank");
+}
+
+function downloadReceipt() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.text("A&S Store Receipt", 20, 20);
+  doc.text("File: " + selectedFile.name, 20, 40);
+  doc.text("Pages: " + pages, 20, 50);
+  doc.text("Total: ₱" + price, 20, 60);
+  doc.save("receipt.pdf");
+}
+</script>
+
+</body>
+</html>
