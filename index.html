@@ -1,162 +1,166 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HAPPY NEW YEAR, WELCOME 2026</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { Upload } from "lucide-react";
+import * as pdfjsLib from "pdfjs-dist";
+import jsPDF from "jspdf";
+import QRCode from "react-qr-code";
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+const MESSENGER_LINK = "https://m.me/ASStoreOfficial";
+const GCASH_NAME = "A&S Store";
+const GCASH_NUMBER = "09XXXXXXXXX";
 
-  body {
-    overflow: hidden;
-    background: radial-gradient(circle at bottom, #0f2027, #203a43, #2c5364);
-    height: 100vh;
-    font-family: 'Luckiest Guy', cursive;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+export default function ASStoreLandingPage() {
+  const [file, setFile] = useState(null);
+  const [pageCount, setPageCount] = useState(0);
+  const [bwPages, setBwPages] = useState(0);
+  const [colorPages, setColorPages] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [paymentRef, setPaymentRef] = useState("");
 
-  h1 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ffd700;
-    text-align: center;
-    text-shadow: 0 0 10px #fff, 0 0 20px #ff0, 0 0 30px #ff0, 0 0 40px #ff0;
-    animation: bounce 1s infinite alternate, glow 2s infinite alternate;
-    z-index: 2;
-    width: 90%;
-    line-height: 1.1;
-    word-break: break-word;
-    font-size: 10vw; /* auto scales based on screen width */
-  }
+  useEffect(() => {
+    const opened = sessionStorage.getItem("m_open");
+    if (!opened) {
+      sessionStorage.setItem("m_open", "1");
+      window.open(MESSENGER_LINK, "_blank");
+    }
+  }, []);
 
-  @keyframes bounce {
-    0% { transform: translate(-50%, -50%) translateY(0); }
-    50% { transform: translate(-50%, -50%) translateY(-20px); }
-    100% { transform: translate(-50%, -50%) translateY(0); }
-  }
+  const pricePerBW = 5;
+  const pricePerColor = 12;
 
-  @keyframes glow {
-    0% { text-shadow: 0 0 5px #fff, 0 0 10px #ff0, 0 0 20px #ff0; }
-    50% { text-shadow: 0 0 20px #fff, 0 0 30px #ff0, 0 0 50px #ff0; }
-    100% { text-shadow: 0 0 5px #fff, 0 0 10px #ff0, 0 0 20px #ff0; }
-  }
+  const computePrice = (bw, color) => bw * pricePerBW + color * pricePerColor;
 
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-</style>
-</head>
-<body>
-<h1>🎉 HAPPY NEW YEAR, WELCOME 2026! 🎉</h1>
-<canvas id="fireworks"></canvas>
-
-<script>
-const canvas = document.getElementById('fireworks');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const fireworks = [];
-const particles = [];
-const colors = ['#ff0','#f0f','#0ff','#0f0','#f00','#ffa500','#ff69b4','#00bfff'];
-
-class Firework {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height;
-    this.targetY = Math.random() * canvas.height / 2;
-    this.color = colors[Math.floor(Math.random() * colors.length)];
-    this.speed = 2 + Math.random() * 2;
-    this.exploded = false;
-  }
-  update() {
-    if(!this.exploded) {
-      this.y -= this.speed;
-      if(this.y <= this.targetY) {
-        this.exploded = true;
-        this.explode();
+  const detectColor = (img) => {
+    const d = img.data;
+    for (let i = 0; i < d.length; i += 50) {
+      if (Math.abs(d[i] - d[i + 1]) > 10 || Math.abs(d[i + 1] - d[i + 2]) > 10) {
+        return true;
       }
     }
-  }
-  explode() {
-    const count = 30 + Math.random() * 40;
-    for(let i=0;i<count;i++){
-      particles.push(new Particle(this.x, this.y, this.color));
+    return false;
+  };
+
+  const analyzePDF = async (file) => {
+    setAnalyzing(true);
+    const buffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+
+    let bw = 0;
+    let color = 0;
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 0.6 });
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      if (detectColor(img)) color++;
+      else bw++;
     }
-  }
-  draw() {
-    if(!this.exploded) {
-      ctx.beginPath();
-      ctx.arc(this.x,this.y,3,0,Math.PI*2);
-      ctx.fillStyle = this.color;
-      ctx.fill();
+
+    setBwPages(bw);
+    setColorPages(color);
+    setPageCount(pdf.numPages);
+    setPrice(computePrice(bw, color));
+    setAnalyzing(false);
+  };
+
+  const handleFile = async (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setFile(f);
+
+    if (!f.name.toLowerCase().endsWith(".pdf")) {
+      setBwPages(1);
+      setColorPages(0);
+      setPageCount(1);
+      setPrice(pricePerBW);
+      return;
     }
-  }
+
+    await analyzePDF(f);
+  };
+
+  const generateReceipt = () => {
+    const doc = new jsPDF();
+    doc.text("A&S STORE RECEIPT", 20, 20);
+    doc.text(`File: ${file?.name}`, 20, 40);
+    doc.text(`Pages: ${pageCount}`, 20, 50);
+    doc.text(`BW: ${bwPages} | Color: ${colorPages}`, 20, 60);
+    doc.text(`Total: ₱${price}`, 20, 70);
+    doc.save("receipt.pdf");
+  };
+
+  const gcashMessage = encodeURIComponent(
+    `GCASH PAYMENT FOR A&S STORE\nName: ${GCASH_NAME}\nNumber: ${GCASH_NUMBER}\nAmount: ₱${price}\nRef: ${paymentRef || "N/A"}`
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h1 className="text-3xl font-bold">A&S STORE SYSTEM</h1>
+
+      {/* Upload */}
+      <div className="mt-4">
+        <input type="file" onChange={handleFile} />
+      </div>
+
+      {file && (
+        <Card className="mt-4">
+          <CardContent className="p-4">
+            <p>File: {file.name}</p>
+            <p>Pages: {pageCount}</p>
+            <p>BW: {bwPages} | Color: {colorPages}</p>
+            <p className="text-green-600 font-bold">Total: ₱{price}</p>
+            {analyzing && <p>Analyzing PDF...</p>}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Payment Section */}
+      {file && (
+        <Card className="mt-4">
+          <CardContent className="p-4">
+            <h2 className="font-bold">GCASH PAYMENT</h2>
+            <p>{GCASH_NAME}</p>
+            <p>{GCASH_NUMBER}</p>
+
+            <div className="mt-3 flex justify-center">
+              <QRCode value={`GCASH:${GCASH_NUMBER}|AMOUNT:${price}`} />
+            </div>
+
+            <input
+              className="border p-2 mt-3 w-full"
+              placeholder="Enter GCASH Reference Number"
+              value={paymentRef}
+              onChange={(e) => setPaymentRef(e.target.value)}
+            />
+
+            <Button
+              className="mt-3 w-full"
+              onClick={() => window.open(`https://m.me/ASStoreOfficial?text=${gcashMessage}`)}
+            >
+              Confirm Payment via Messenger
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Receipt */}
+      {file && (
+        <Button className="mt-4" onClick={generateReceipt}>
+          Download Receipt
+        </Button>
+      )}
+    </div>
+  );
 }
 
-class Particle {
-  constructor(x, y, color) {
-    this.x = x;
-    this.y = y;
-    this.color = color;
-    this.speedX = (Math.random() - 0.5) * 4;
-    this.speedY = (Math.random() - 0.5) * 4;
-    this.alpha = 1;
-    this.size = 1 + Math.random() * 2;
-    this.gravity = 0.03;
-  }
-  update() {
-    this.speedY += this.gravity;
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.alpha -= 0.02;
-  }
-  draw() {
-    ctx.save();
-    ctx.globalAlpha = this.alpha;
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.restore();
-  }
-}
-
-function animate() {
-  ctx.fillStyle = 'rgba(0,0,0,0.2)';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  if(Math.random() < 0.04) fireworks.push(new Firework());
-
-  fireworks.forEach((f,i)=> {
-    f.update();
-    f.draw();
-    if(f.exploded) fireworks.splice(i,1);
-  });
-
-  particles.forEach((p,i)=>{
-    p.update();
-    p.draw();
-    if(p.alpha <= 0) particles.splice(i,1);
-  });
-
-  requestAnimationFrame(animate);
-}
-
-animate();
-
-window.addEventListener('resize', ()=>{
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-</body>
-</html>
