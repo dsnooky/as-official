@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>A&S Store - Printing Services</title>
+  <title>A&S Store - Order System</title>
 
   <style>
     body {
@@ -20,23 +20,13 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
     }
-
-    h1, h2, h3 { margin: 0; }
 
     .hero {
       text-align: center;
-      padding: 70px 20px;
-    }
-
-    .hero h1 {
-      font-size: 34px;
-      margin-bottom: 10px;
-    }
-
-    .hero p {
-      color: #555;
-      margin-bottom: 20px;
+      padding: 60px 20px;
     }
 
     .btn {
@@ -44,19 +34,14 @@
       border-radius: 8px;
       border: none;
       cursor: pointer;
-      font-size: 15px;
       margin: 5px;
+      font-size: 15px;
     }
 
-    .primary {
-      background: #0084ff;
-      color: white;
-    }
-
-    .black {
-      background: black;
-      color: white;
-    }
+    .primary { background: #0084ff; color: white; }
+    .black { background: black; color: white; }
+    .outline { border: 1px solid #333; background: transparent; }
+    .green { background: #16a34a; color: white; }
 
     .container {
       max-width: 900px;
@@ -66,7 +51,7 @@
 
     .card {
       background: white;
-      padding: 18px;
+      padding: 16px;
       margin: 12px 0;
       border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.06);
@@ -76,18 +61,6 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 12px;
-    }
-
-    .qr {
-      width: 180px;
-      margin-top: 10px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: gray;
-      font-size: 14px;
     }
 
     .highlight {
@@ -104,88 +77,79 @@
   <button class="btn black" onclick="openMessenger()">Contact</button>
 </header>
 
-<!-- HERO -->
 <div class="hero">
   <h1>Fast & Affordable Printing Services</h1>
   <p>Xerox • ID Pictures • Stickers • Rush Printing</p>
 
-  <button class="btn primary" onclick="openMessenger()">
-    💬 Send Us Your File on Messenger
+  <button class="btn primary" onclick="sendOrder()">
+    💬 Send Order & Message Us
   </button>
 
-  <p style="margin-top:12px;color:gray;">
-    Just send your file + details (BW / Color / Quantity). We will handle everything.
+  <p style="color:gray; margin-top:10px;">
+    Send order → Auto saved to system → Opens Messenger
   </p>
 </div>
 
-<!-- CONTENT -->
 <div class="container">
 
-  <!-- HOW TO ORDER -->
   <div class="card">
-    <h3>📌 How to Order</h3>
-    <p>1. Click <span class="highlight">Message Us</span></p>
-    <p>2. Send your file on Messenger</p>
-    <p>3. Tell printing type: BW or Color</p>
-    <p>4. Wait for price confirmation</p>
-    <p>5. Pay via GCash</p>
-    <p>6. Pick up / Delivery</p>
+    <h3>📌 How it works</h3>
+    <p>1. Click Send Order</p>
+    <p>2. Order goes to Google Sheets</p>
+    <p>3. Messenger opens automatically</p>
+    <p>4. You confirm price</p>
+    <p>5. Customer pays via GCash</p>
   </div>
 
-  <!-- PRICE LIST -->
   <div class="card">
     <h3>💰 Price List</h3>
-
     <div class="grid">
-      <div class="card">
-        <h4>Xerox / Printing</h4>
-        <p>₱5 BW</p>
-        <p>₱12 Color</p>
-      </div>
-
-      <div class="card">
-        <h4>ID Pictures</h4>
-        <p>₱50 - ₱120</p>
-      </div>
-
-      <div class="card">
-        <h4>Stickers</h4>
-        <p>₱10+</p>
-      </div>
+      <div class="card">Xerox: ₱5 BW / ₱12 Color</div>
+      <div class="card">ID Picture: ₱50 - ₱120</div>
+      <div class="card">Sticker: ₱10+</div>
     </div>
   </div>
 
-  <!-- PAYMENT -->
   <div class="card">
-    <h3>💳 GCash Payment</h3>
-    <p><b>GCash Number:</b> 09XX-XXX-XXXX</p>
-
-    <!-- Replace with your real QR image -->
-    <img src="gcash_qr.png" class="qr" alt="GCash QR" />
-
-    <p style="color:gray;">
-      Send payment after price confirmation
-    </p>
-  </div>
-
-  <!-- CTA -->
-  <div class="card" style="text-align:center;">
-    <h3>🚀 Need Printing Now?</h3>
-    <p>Message us directly and we will assist you immediately</p>
-
-    <button class="btn primary" onclick="openMessenger()">
-      Chat on Messenger
-    </button>
+    <h3>💳 Payment</h3>
+    <p><b>GCash:</b> 09XX-XXX-XXXX</p>
   </div>
 
 </div>
 
-<!-- FOOTER -->
-<footer>
-  © 2026 A&S Store - Printing Services
-</footer>
-
 <script>
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBJrxACWaFUuAw8gfmFEr2sfnRatsgPDNopAb-Doi5_hfbKGcUXhuWNGn8WTLNUUm38g/exec";
+
+// SAMPLE ORDER DATA (you can later connect real file system)
+let orderData = {
+  customer: "Walk-in Customer",
+  file: "No file uploaded",
+  type: "BW",
+  pages: 1,
+  bw: 1,
+  color: 0,
+  total: 5,
+  notes: "Website order"
+};
+
+function sendOrder() {
+
+  // 1. Send to Google Sheets
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(orderData)
+  })
+  .then(() => console.log("Saved to Sheets"))
+  .catch(err => console.log(err));
+
+  // 2. Open Messenger with order
+  const msg = encodeURIComponent(
+    `A&S Store Order:\nFile: ${orderData.file}\nPages: ${orderData.pages}\nTotal: ₱${orderData.total}`
+  );
+
+  window.open("https://m.me/ASStoreOfficial?text=" + msg, "_blank");
+}
+
 function openMessenger() {
   window.open("https://m.me/ASStoreOfficial", "_blank");
 }
