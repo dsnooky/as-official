@@ -3,84 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>A&S Store - Premium Printing Services</title>
+  <title>A&S Store - Printing Services</title>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #111827);
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
       color: #fff;
-      overflow-x: hidden;
-    }
-
-    /* ANIMATED BACKGROUND GLOW */
-    body::before {
-      content: "";
-      position: fixed;
-      width: 400px;
-      height: 400px;
-      background: #00aaff;
-      filter: blur(140px);
-      opacity: 0.25;
-      top: -100px;
-      left: -100px;
-      animation: floatGlow 8s infinite alternate;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      width: 400px;
-      height: 400px;
-      background: #ff00cc;
-      filter: blur(160px);
-      opacity: 0.15;
-      bottom: -120px;
-      right: -120px;
-      animation: floatGlow2 10s infinite alternate;
-    }
-
-    @keyframes floatGlow {
-      from { transform: translate(0,0); }
-      to { transform: translate(60px,40px); }
-    }
-
-    @keyframes floatGlow2 {
-      from { transform: translate(0,0); }
-      to { transform: translate(-60px,-40px); }
+      scroll-behavior: smooth;
     }
 
     /* HEADER */
     header {
       position: sticky;
       top: 0;
-      backdrop-filter: blur(15px);
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 22px;
+      padding: 15px 20px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
       z-index: 1000;
     }
 
     .logo {
       font-weight: bold;
-      letter-spacing: 1px;
+      font-size: 18px;
     }
 
     nav a {
-      color: #fff;
-      margin: 0 12px;
+      color: white;
+      margin: 0 10px;
       text-decoration: none;
       opacity: 0.8;
-      transition: 0.3s;
     }
 
     nav a:hover {
@@ -91,58 +48,46 @@
     /* HERO */
     .hero {
       text-align: center;
-      padding: 100px 20px;
-      animation: fadeIn 1s ease;
+      padding: 90px 20px;
     }
 
     .hero h1 {
-      font-size: 48px;
+      font-size: 42px;
       margin-bottom: 10px;
-      animation: slideUp 1s ease;
     }
 
     .hero p {
       opacity: 0.8;
-      margin-bottom: 20px;
     }
 
-    /* BUTTONS */
     .btn {
-      padding: 14px 22px;
-      border-radius: 12px;
+      padding: 14px 20px;
       border: none;
+      border-radius: 10px;
       cursor: pointer;
+      margin: 8px;
       font-size: 16px;
       transition: 0.3s;
-      margin: 6px;
     }
 
     .primary {
       background: linear-gradient(135deg, #00aaff, #0066ff);
       color: white;
-      box-shadow: 0 0 20px rgba(0,170,255,0.3);
     }
 
-    .primary:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(0,170,255,0.6);
-    }
-
-    .glass-btn {
+    .glass {
       background: rgba(255,255,255,0.1);
       color: white;
       border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
     }
 
-    .glass-btn:hover {
+    .btn:hover {
       transform: scale(1.05);
-      border-color: #00aaff;
     }
 
     /* SECTIONS */
     .container {
-      max-width: 1000px;
+      max-width: 900px;
       margin: auto;
       padding: 20px;
     }
@@ -150,67 +95,49 @@
     .card {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.1);
-      padding: 22px;
+      padding: 18px;
       margin: 15px 0;
-      border-radius: 16px;
-      backdrop-filter: blur(12px);
-      transition: 0.3s;
-      animation: fadeIn 1s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      border-color: #00aaff;
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
+      gap: 12px;
     }
 
-    /* FLOATING BUTTON */
+    /* FLOAT BUTTON */
     .floating {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: linear-gradient(135deg, #00aaff, #0066ff);
+      background: #00aaff;
       color: white;
       padding: 14px 18px;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 0 25px rgba(0,170,255,0.5);
+      box-shadow: 0 0 20px rgba(0,170,255,0.5);
       animation: pulse 2s infinite;
-      z-index: 999;
     }
 
     @keyframes pulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.08); }
+      50% { transform: scale(1.1); }
       100% { transform: scale(1); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     footer {
       text-align: center;
-      padding: 30px;
+      padding: 25px;
       opacity: 0.6;
-      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="logo">A&S Store</div>
 
@@ -219,31 +146,31 @@
     <a href="#contact">Contact</a>
   </nav>
 
-  <button class="btn glass-btn" onclick="openMessenger()">Message</button>
+  <button class="btn glass" onclick="openMessenger()">Message</button>
 </header>
 
 <!-- HERO -->
-<div class="hero">
-  <h1>Premium Printing Services</h1>
-  <p>Xerox •Printing Documents • Rush ID • Stickers • Rush Printing</p>
+<section class="hero">
+  <h1>Fast & Affordable Printing</h1>
+  <p>Xerox • ID • Stickers • Rush Printing</p>
 
   <button class="btn primary" onclick="openMessenger()">
     💬 Message Us Now
   </button>
 
-  <button class="btn glass-btn" onclick="scrollToPricing()">
+  <button class="btn glass" onclick="scrollToPricing()">
     View Pricing
   </button>
-</div>
+</section>
 
-<!-- HOW -->
+<!-- HOW IT WORKS -->
 <div class="container">
   <div class="card">
     <h2>📌 How it Works</h2>
-    <p>1. Message us</p>
-    <p>2. Send file + details</p>
-    <p>3. Get price confirmation</p>
-    <p>4. Pay via GCash or Cash</p>
+    <p>1. Click Message Us</p>
+    <p>2. Send your file on Messenger</p>
+    <p>3. We reply with price</p>
+    <p>4. Pay via GCash</p>
     <p>5. Print & release</p>
   </div>
 </div>
@@ -254,18 +181,18 @@
     <h2>💰 Pricing</h2>
 
     <div class="grid">
-      <div class="card">Xerox<br>₱5 BW / ₱7 Color,<br> B2B add ₱2 </div>
-      <div class="card">ID Photo<br>₱45 - ₱65</div>
-      <div class="card">Sticker<br>₱20+</div>
+      <div class="card">Xerox<br>₱5 BW / ₱12 Color</div>
+      <div class="card">ID Picture<br>₱50 - ₱120</div>
+      <div class="card">Sticker<br>₱10+</div>
     </div>
   </div>
 </div>
 
 <!-- CONTACT -->
 <div class="container" id="contact">
-  <div class="card">
+  <div class="card" style="text-align:center;">
     <h2>📩 Contact Us</h2>
-    <p>Fast reply on Messenger</p>
+    <p>We reply fast on Messenger</p>
 
     <button class="btn primary" onclick="openMessenger()">
       Open Messenger
@@ -273,24 +200,26 @@
   </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
   © 2026 A&S Store
 </footer>
 
+<!-- FLOATING CHAT -->
 <div class="floating" onclick="openMessenger()">
   💬 Chat
 </div>
 
 <script>
 function openMessenger() {
-  const url = "https://www.messenger.com/t/asmamburao";
-  const fallback = "https://m.me/asmamburao";
+  const url1 = "https://www.messenger.com/t/ASStoreOfficial";
+  const url2 = "https://m.me/ASStoreOfficial";
 
-  const win = window.open(url, "_blank");
+  const win = window.open(url1, "_blank");
 
   setTimeout(() => {
     if (!win || win.closed) {
-      window.open(fallback, "_blank");
+      window.open(url2, "_blank");
     }
   }, 500);
 }
