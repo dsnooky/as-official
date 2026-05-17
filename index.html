@@ -24,6 +24,12 @@ header {
   padding: 15px;
 }
 
+header a{
+  color:white;
+  margin-left:15px;
+  text-decoration:none;
+}
+
 /* HERO */
 .hero {
   height: 70vh;
@@ -40,11 +46,19 @@ header {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-weight:bold;
 }
-.primary { background:#00aaff; color:white; }
+.primary { 
+  background:#00aaff; 
+  color:white; 
+}
 
 /* PRICING CARDS */
-.container { padding:20px; max-width:900px; margin:auto; }
+.container { 
+  padding:20px; 
+  max-width:900px; 
+  margin:auto; 
+}
 
 .card {
   background: rgba(255,255,255,0.05);
@@ -56,7 +70,7 @@ header {
 }
 
 .card:hover {
-  transform: scale(1.04);
+  transform: scale(1.02);
   box-shadow: 0 0 25px rgba(0,170,255,0.35);
 }
 
@@ -67,11 +81,17 @@ header {
   border-radius: 12px;
 }
 
-select, input {
+select, input[type="number"] {
   width: 100%;
   padding: 10px;
-  margin: 6px 0;
+  margin: 6px 0 15px;
   border-radius: 6px;
+  border:none;
+}
+
+label {
+  display:block;
+  margin-top:10px;
 }
 
 /* FLOAT */
@@ -80,9 +100,10 @@ select, input {
   bottom: 20px;
   right: 20px;
   background: #00aaff;
-  padding: 14px;
+  padding: 14px 20px;
   border-radius: 50px;
   cursor: pointer;
+  font-weight:bold;
 }
 </style>
 </head>
@@ -91,6 +112,7 @@ select, input {
 
 <header>
 <div><b>A&S Store</b></div>
+
 <nav>
 <a href="#pricing">Pricing</a>
 <a href="#calc">Calculator</a>
@@ -102,7 +124,10 @@ select, input {
 <div>
 <h1>Printing Services</h1>
 <p>Xerox • Color • Rush Printing</p>
-<button class="btn primary" onclick="openMessenger()">Message Us</button>
+
+<button class="btn primary" onclick="openMessenger()">
+Message Us
+</button>
 </div>
 </div>
 
@@ -112,14 +137,32 @@ select, input {
 <div class="card">
 <h2>📌 Pricing Updated</h2>
 
-<b>XEROX / PRINT (B&W)</b><br>
-SHORT/A4: ₱5 / ₱7 / ₱10<br>
-LONG: ₱6 / ₱8 / ₱12<br>
+<b>XEROX / PRINT (B&W)</b><br><br>
+
+SHORT/A4<br>
+Text Only - ₱5<br>
+Text + Image - ₱7<br>
+Full Image - ₱10<br><br>
+
+LONG<br>
+Text Only - ₱6<br>
+Text + Image - ₱8<br>
+Full Image - ₱12<br><br>
+
 + ₱2 back-to-back<br><br>
 
-<b>COLOR PRINT</b><br>
-SHORT/A4: ₱7 / ₱15 / ₱20<br>
-LONG: ₱8 / ₱18 / ₱22<br>
+<b>COLOR PRINT</b><br><br>
+
+SHORT/A4<br>
+Text Only - ₱7<br>
+Text + Image - ₱15<br>
+Full Image - ₱20<br><br>
+
+LONG<br>
+Text Only - ₱8<br>
+Text + Image - ₱18<br>
+Full Image - ₱22<br><br>
+
 + ₱3 back-to-back
 </div>
 
@@ -129,18 +172,22 @@ LONG: ₱8 / ₱18 / ₱22<br>
 <div class="container" id="calc">
 
 <div class="calc card">
+
 <h2>🧮 Auto Price Calculator</h2>
 
+<label>Print Type</label>
 <select id="type">
 <option value="bw">Black & White</option>
 <option value="color">Color</option>
 </select>
 
+<label>Paper Size</label>
 <select id="page">
 <option value="short">Short / A4</option>
 <option value="long">Long</option>
 </select>
 
+<label>Content Type</label>
 <select id="content">
 <option value="text">Text Only</option>
 <option value="mix">Text + Image</option>
@@ -148,21 +195,35 @@ LONG: ₱8 / ₱18 / ₱22<br>
 </select>
 
 <label>
-<input type="checkbox" id="rush"> Rush Print (+₱5)
+<input type="checkbox" id="rush">
+Rush Print (+₱5)
 </label>
 
 <label>
-<input type="checkbox" id="back"> Back-to-back
+<input type="checkbox" id="back">
+Back-to-back
 </label>
 
-<h2>Total: ₱<span id="total">0</span></h2>
+<label>
+PCS:
+<input type="number" id="pcs" value="1" min="1">
+</label>
 
-<button class="btn primary" onclick="openMessenger()">Order via Messenger</button>
+<h3>Price Per Page: ₱<span id="price">0</span></h3>
+
+<h2>Total Amount: ₱<span id="total">0</span></h2>
+
+<button class="btn primary" onclick="openMessenger()">
+Order via Messenger
+</button>
+
 </div>
 
 </div>
 
-<div class="floating" onclick="openMessenger()">Chat</div>
+<div class="floating" onclick="openMessenger()">
+Chat
+</div>
 
 <script>
 
@@ -171,45 +232,67 @@ const pageEl = document.getElementById("page");
 const contentEl = document.getElementById("content");
 const rushEl = document.getElementById("rush");
 const backEl = document.getElementById("back");
+const pcsEl = document.getElementById("pcs");
 const totalEl = document.getElementById("total");
+const priceEl = document.getElementById("price");
 
 function calc(){
 
 let price = 0;
+
 let type = typeEl.value;
 let page = pageEl.value;
 let content = contentEl.value;
 
 if(type === "bw"){
+
   if(page === "short"){
-    price = content==="text"?5:content==="mix"?7:10;
-  } else {
-    price = content==="text"?6:content==="mix"?8:12;
+    price = content==="text" ? 5 :
+            content==="mix" ? 7 : 10;
+  } 
+  
+  else {
+    price = content==="text" ? 6 :
+            content==="mix" ? 8 : 12;
   }
+
   if(backEl.checked) price += 2;
 }
 
 if(type === "color"){
+
   if(page === "short"){
-    price = content==="text"?7:content==="mix"?15:20;
-  } else {
-    price = content==="text"?8:content==="mix"?18:22;
+    price = content==="text" ? 7 :
+            content==="mix" ? 15 : 20;
+  } 
+  
+  else {
+    price = content==="text" ? 8 :
+            content==="mix" ? 18 : 22;
   }
+
   if(backEl.checked) price += 3;
 }
 
 if(rushEl.checked) price += 5;
 
-totalEl.innerText = price;
+let pcs = parseInt(pcsEl.value) || 1;
+
+priceEl.innerText = price;
+totalEl.innerText = price * pcs;
 
 }
 
-[typeEl,pageEl,contentEl,rushEl,backEl].forEach(e=>{
+[typeEl,pageEl,contentEl,rushEl,backEl,pcsEl].forEach(e=>{
 e.addEventListener("change",calc);
+e.addEventListener("input",calc);
 });
 
 function openMessenger(){
-window.open("https://www.messenger.com/t/asmamburao","_blank");
+window.open(
+"https://www.messenger.com/t/asmamburao",
+"_blank"
+);
 }
 
 calc();
