@@ -3,301 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A&S Store Printing System</title>
+<title>AS Printing Services</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
+body{
+margin:0;
+font-family:Segoe UI,sans-serif;
+background:#0f172a;
+color:white;
 }
 
-/* HEADER */
-header {
-  position: sticky;
-  top: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
+.hero{
+min-height:70vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+padding:20px;
 }
 
-header a{
-  color:white;
-  margin-left:15px;
-  text-decoration:none;
+.hero h1{
+font-size:3rem;
 }
 
-/* HERO */
-.hero {
-  height: 70vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: linear-gradient(120deg,#0f172a,#1e3a8a);
+.btn{
+display:inline-block;
+background:white;
+color:#2563eb;
+padding:14px 24px;
+border-radius:10px;
+text-decoration:none;
+font-weight:bold;
 }
 
-/* BUTTON */
-.btn {
-  padding: 12px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight:bold;
-}
-.primary { 
-  background:#00aaff; 
-  color:white; 
+.section{
+padding:50px 8%;
 }
 
-/* PRICING CARDS */
-.container { 
-  padding:20px; 
-  max-width:900px; 
-  margin:auto; 
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:20px;
 }
 
-.card {
-  background: rgba(255,255,255,0.05);
-  padding: 18px;
-  border-radius: 12px;
-  margin: 12px 0;
-  border: 1px solid rgba(255,255,255,0.1);
-  transition: 0.3s;
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:15px;
 }
 
-.card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 25px rgba(0,170,255,0.35);
+.card h3{
+color:#67e8f9;
 }
 
-/* CALCULATOR */
-.calc {
-  background: rgba(255,255,255,0.05);
-  padding: 20px;
-  border-radius: 12px;
-}
-
-select, input[type="number"] {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0 15px;
-  border-radius: 6px;
-  border:none;
-}
-
-label {
-  display:block;
-  margin-top:10px;
-}
-
-/* FLOAT */
-.floating {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #00aaff;
-  padding: 14px 20px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-weight:bold;
+footer{
+text-align:center;
+padding:20px;
 }
 </style>
 </head>
-
 <body>
 
-<header>
-<div><b>A&S Store</b></div>
-
-<nav>
-<a href="#pricing">Pricing</a>
-<a href="#calc">Calculator</a>
-</nav>
-</header>
-
-<!-- HERO -->
-<div class="hero">
+<section class="hero">
 <div>
-<h1>Printing Services</h1>
-<p>Xerox • Color • Rush Printing</p>
+<h1>🖨️ AS PRINTING SERVICES</h1>
+<p>Fast • Affordable • Quality Printing</p>
 
-<button class="btn primary" onclick="openMessenger()">
-Message Us
-</button>
+<a href="calculator.html" class="btn">
+🧮 Open Calculator
+</a>
 </div>
-</div>
+</section>
 
-<!-- PRICING -->
-<div class="container" id="pricing">
+<section class="section">
+
+<h2>Our Services</h2>
+
+<div class="grid">
 
 <div class="card">
-<h2>📌 Pricing Updated</h2>
+<h3>📄 Xerox</h3>
+<p>B&W Short - ₱4</p>
+<p>B&W Long - ₱5</p>
+<p>Colored Short - ₱6</p>
+<p>Colored Long - ₱7</p>
+</div>
 
-<b>XEROX / PRINT (B&W)</b><br><br>
+<div class="card">
+<h3>🖨️ Printing</h3>
+<p>B&W - ₱5 to ₱6</p>
+<p>Colored - ₱7 to ₱20</p>
+</div>
 
-SHORT/A4<br>
-Text Only - ₱5<br>
-Text + Image - ₱7<br>
-Full Image - ₱10<br><br>
+<div class="card">
+<h3>🏷️ Stickers</h3>
+<p>A4 Sticker - ₱50</p>
+</div>
 
-LONG<br>
-Text Only - ₱6<br>
-Text + Image - ₱8<br>
-Full Image - ₱12<br><br>
+<div class="card">
+<h3>🪪 Photo ID</h3>
+<p>Starts at ₱35</p>
+</div>
 
-+ ₱2 back-to-back<br><br>
+<div class="card">
+<h3>📑 Resume</h3>
+<p>₱100</p>
+</div>
 
-<b>COLOR PRINT</b><br><br>
-
-SHORT/A4<br>
-Text Only - ₱7<br>
-Text + Image - ₱15<br>
-Full Image - ₱20<br><br>
-
-LONG<br>
-Text Only - ₱8<br>
-Text + Image - ₱18<br>
-Full Image - ₱22<br><br>
-
-+ ₱3 back-to-back
+<div class="card">
+<h3>📋 Appointment</h3>
+<p>Police Clearance - ₱230</p>
 </div>
 
 </div>
 
-<!-- CALCULATOR -->
-<div class="container" id="calc">
+</section>
 
-<div class="calc card">
-
-<h2>🧮 Auto Price Calculator</h2>
-
-<label>Print Type</label>
-<select id="type">
-<option value="bw">Black & White</option>
-<option value="color">Color</option>
-</select>
-
-<label>Paper Size</label>
-<select id="page">
-<option value="short">Short / A4</option>
-<option value="long">Long</option>
-</select>
-
-<label>Content Type</label>
-<select id="content">
-<option value="text">Text Only</option>
-<option value="mix">Text + Image</option>
-<option value="full">Full Image</option>
-</select>
-
-<label>
-<input type="checkbox" id="rush">
-Rush Print (+₱5)
-</label>
-
-<label>
-<input type="checkbox" id="back">
-Back-to-back
-</label>
-
-<label>
-PCS:
-<input type="number" id="pcs" value="1" min="1">
-</label>
-
-<h3>Price Per Page: ₱<span id="price">0</span></h3>
-
-<h2>Total Amount: ₱<span id="total">0</span></h2>
-
-<button class="btn primary" onclick="openMessenger()">
-Order via Messenger
-</button>
-
-</div>
-
-</div>
-
-<div class="floating" onclick="openMessenger()">
-Chat
-</div>
-
-<script>
-
-const typeEl = document.getElementById("type");
-const pageEl = document.getElementById("page");
-const contentEl = document.getElementById("content");
-const rushEl = document.getElementById("rush");
-const backEl = document.getElementById("back");
-const pcsEl = document.getElementById("pcs");
-const totalEl = document.getElementById("total");
-const priceEl = document.getElementById("price");
-
-function calc(){
-
-let price = 0;
-
-let type = typeEl.value;
-let page = pageEl.value;
-let content = contentEl.value;
-
-if(type === "bw"){
-
-  if(page === "short"){
-    price = content==="text" ? 5 :
-            content==="mix" ? 7 : 10;
-  } 
-  
-  else {
-    price = content==="text" ? 6 :
-            content==="mix" ? 8 : 12;
-  }
-
-  if(backEl.checked) price += 2;
-}
-
-if(type === "color"){
-
-  if(page === "short"){
-    price = content==="text" ? 7 :
-            content==="mix" ? 15 : 20;
-  } 
-  
-  else {
-    price = content==="text" ? 8 :
-            content==="mix" ? 18 : 22;
-  }
-
-  if(backEl.checked) price += 3;
-}
-
-if(rushEl.checked) price += 5;
-
-let pcs = parseInt(pcsEl.value) || 1;
-
-priceEl.innerText = price;
-totalEl.innerText = price * pcs;
-
-}
-
-[typeEl,pageEl,contentEl,rushEl,backEl,pcsEl].forEach(e=>{
-e.addEventListener("change",calc);
-e.addEventListener("input",calc);
-});
-
-function openMessenger(){
-window.open(
-"m.me/1000997779774312",
-"_blank"
-);
-}
-
-calc();
-
-</script>
+<footer>
+© 2026 AS Printing Services
+</footer>
 
 </body>
 </html>
