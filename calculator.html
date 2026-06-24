@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS Printing Calculator</title>
+
+<style>
+body{
+margin:0;
+font-family:Segoe UI,sans-serif;
+background:#0f172a;
+color:white;
+padding:20px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+}
+
+.card{
+background:#1e293b;
+padding:25px;
+border-radius:15px;
+}
+
+select,input{
+width:100%;
+padding:12px;
+margin-top:5px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+}
+
+.btn{
+width:100%;
+padding:15px;
+background:#22c55e;
+border:none;
+border-radius:10px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.total{
+text-align:center;
+font-size:2rem;
+color:#22c55e;
+margin:20px 0;
+}
+
+.back{
+display:inline-block;
+margin-bottom:20px;
+color:white;
+text-decoration:none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<a href="index.html" class="back">
+← Back to Services
+</a>
+
+<div class="card">
+
+<h2>🧮 Order Calculator</h2>
+
+<label>Category</label>
+<select id="category"></select>
+
+<label>Service</label>
+<select id="service"></select>
+
+<label>Quantity</label>
+<input type="number" id="qty" value="1" min="1">
+
+<div class="total">
+₱<span id="total">0.00</span>
+</div>
+
+<button class="btn" onclick="sendOrder()">
+Order via Messenger
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const products = {
+
+"📄 Xerox":[
+{name:"B&W Short/A4",price:4},
+{name:"B&W Long",price:5},
+{name:"Colored Short/A4",price:6},
+{name:"Colored Long",price:7}
+],
+
+"🖨️ Printing":[
+{name:"B&W Short",price:5},
+{name:"B&W Long",price:6},
+{name:"Colored Text",price:7},
+{name:"Colored Text Long",price:8},
+{name:"Image + Text Short",price:10},
+{name:"Image + Text Long",price:15},
+{name:"Full Image Short",price:15},
+{name:"Full Image Long",price:20}
+],
+
+"🏷️ Stickers":[
+{name:"Sticker A4",price:50}
+],
+
+"🪪 Photo ID":[
+{name:"8 pcs 1x1",price:35},
+{name:"4 pcs 2x2",price:35},
+{name:"Combo Set",price:55}
+],
+
+"📑 Resume":[
+{name:"Resume Package",price:100}
+],
+
+"📋 Appointment":[
+{name:"Police Clearance",price:230}
+]
+
+};
+
+const category=document.getElementById("category");
+const service=document.getElementById("service");
+const qty=document.getElementById("qty");
+const total=document.getElementById("total");
+
+for(let cat in products){
+let option=document.createElement("option");
+option.textContent=cat;
+option.value=cat;
+category.appendChild(option);
+}
+
+function loadServices(){
+
+service.innerHTML="";
+
+products[category.value].forEach(item=>{
+
+let option=document.createElement("option");
+
+option.value=item.price;
+option.textContent=
+`${item.name} - ₱${item.price}`;
+
+service.appendChild(option);
+
+});
+
+calculate();
+}
+
+function calculate(){
+
+let price=parseFloat(service.value)||0;
+let quantity=parseInt(qty.value)||1;
+
+total.textContent=
+(price*quantity).toFixed(2);
+
+}
+
+category.addEventListener("change",loadServices);
+service.addEventListener("change",calculate);
+qty.addEventListener("input",calculate);
+
+loadServices();
+
+function sendOrder(){
+
+const message=
+`AS PRINTING ORDER
+
+Category: ${category.value}
+Service: ${service.options[service.selectedIndex].text}
+Quantity: ${qty.value}
+Total: ₱${total.textContent}`;
+
+window.open(
+`https://m.me/1000997779774312?text=${encodeURIComponent(message)}`,
+"_blank"
+);
+
+}
+
+</script>
+
+</body>
+</html>
