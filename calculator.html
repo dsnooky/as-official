@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,57 +7,141 @@
 <title>AS Printing Calculator</title>
 
 <style>
+:root{
+    --primary:#2563eb;
+    --secondary:#06b6d4;
+    --dark:#0f172a;
+    --card:#1e293b;
+    --success:#22c55e;
+    --white:#ffffff;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
 body{
-margin:0;
-font-family:Segoe UI,sans-serif;
-background:#0f172a;
-color:white;
-padding:20px;
+    background:var(--dark);
+    color:white;
+    min-height:100vh;
+    padding:20px;
 }
 
 .container{
-max-width:700px;
-margin:auto;
+    max-width:700px;
+    margin:auto;
+}
+
+.back-btn{
+    display:inline-block;
+    margin-bottom:20px;
+    color:white;
+    text-decoration:none;
+    font-weight:600;
 }
 
 .card{
-background:#1e293b;
-padding:25px;
-border-radius:15px;
+    background:var(--card);
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
 
-select,input{
-width:100%;
-padding:12px;
-margin-top:5px;
-margin-bottom:15px;
-border:none;
-border-radius:10px;
+h1{
+    text-align:center;
+    margin-bottom:10px;
 }
 
-.btn{
-width:100%;
-padding:15px;
-background:#22c55e;
-border:none;
-border-radius:10px;
-color:white;
-font-weight:bold;
-cursor:pointer;
+.subtitle{
+    text-align:center;
+    opacity:.8;
+    margin-bottom:25px;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+select,
+input[type="number"]{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+}
+
+.checkbox-group{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:15px 0;
+}
+
+.checkbox-group input{
+    width:auto;
+}
+
+.summary{
+    background:rgba(255,255,255,.05);
+    border-radius:15px;
+    padding:20px;
+    margin-top:20px;
+}
+
+.summary p{
+    margin:8px 0;
 }
 
 .total{
-text-align:center;
-font-size:2rem;
-color:#22c55e;
-margin:20px 0;
+    text-align:center;
+    margin-top:15px;
 }
 
-.back{
-display:inline-block;
-margin-bottom:20px;
-color:white;
-text-decoration:none;
+.total h2{
+    color:var(--success);
+    font-size:2rem;
+}
+
+.btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:var(--success);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+.btn:hover{
+    opacity:.9;
+}
+
+@media(max-width:768px){
+
+    body{
+        padding:15px;
+    }
+
+    .card{
+        padding:20px;
+    }
+
+    h1{
+        font-size:1.8rem;
+    }
 }
 </style>
 </head>
@@ -64,29 +149,46 @@ text-decoration:none;
 
 <div class="container">
 
-<a href="index.html" class="back">
-← Back to Services
-</a>
+<a href="index.html" class="back-btn">← Back to Services</a>
 
 <div class="card">
 
-<h2>🧮 Order Calculator</h2>
+<h1>🧮 AS Printing Calculator</h1>
+<p class="subtitle">Calculate your order instantly</p>
 
+<div class="form-group">
 <label>Category</label>
 <select id="category"></select>
+</div>
 
+<div class="form-group">
 <label>Service</label>
 <select id="service"></select>
+</div>
 
+<div class="form-group">
 <label>Quantity</label>
 <input type="number" id="qty" value="1" min="1">
+</div>
+
+<div class="checkbox-group">
+<input type="checkbox" id="rush">
+<label for="rush">Rush Service (+₱20)</label>
+</div>
+
+<div class="summary">
+<p><strong>Category:</strong> <span id="selectedCategory">-</span></p>
+<p><strong>Service:</strong> <span id="selectedService">-</span></p>
+<p><strong>Quantity:</strong> <span id="selectedQty">1</span></p>
 
 <div class="total">
-₱<span id="total">0.00</span>
+<h3>Total Amount</h3>
+<h2>₱<span id="total">0.00</span></h2>
+</div>
 </div>
 
 <button class="btn" onclick="sendOrder()">
-Order via Messenger
+📩 Order via Messenger
 </button>
 
 </div>
@@ -98,109 +200,133 @@ Order via Messenger
 const products = {
 
 "📄 Xerox":[
-{name:"B&W Short/A4",price:4},
-{name:"B&W Long",price:5},
-{name:"Birth/Marriage/Death Certificate",price:10},
-{name:"Colored Short/A4",price:6},
-{name:"Colored Long",price:7}
+    {name:"B&W Short",price:4},
+    {name:"B&W Long",price:5},
+    {name:"Birth/Marriage/Death Certificate",price:10},
+    {name:"Valid I.D (B&W)",price:5},
+    {name:"Valid I.D (Colored)",price:8},
+    {name:"Colored Short",price:6},
+    {name:"Colored Long",price:7}
 ],
 
 "🖨️ Printing":[
-{name:"B&W Short",price:5},
-{name:"B&W Long",price:6},
-{name:"Colored Text",price:7},
-{name:"Colored Text Long",price:8},
-{name:"Image + Text Short",price:10},
-{name:"Image + Text Long",price:15},
-{name:"Full Image Short",price:15},
-{name:"Full Image Long",price:20}
+    {name:"A4/Short",price:5},
+    {name:"Long",price:6},
+    {name:"Valid I.D",price:10},
+    {name:"Birth/Marriage/Death Certificate",price:10},
+    {name:"Image w/ Text (A4/Short)",price:10},
+    {name:"Image w/ Text (Long)",price:15},
+    {name:"Full Image (A4/Short)",price:15},
+    {name:"Full Image (Long)",price:20}
 ],
 
 "🏷️ Stickers":[
-{name:"Sticker A4",price:50}
+    {name:"A4 Sticker",price:50}
 ],
 
 "🪪 Photo ID":[
-{name:"8 pcs 1x1",price:35},
-{name:"4 pcs 2x2",price:35},
-{name:"Combo Set",price:55}
+    {name:"8 pcs 1x1",price:35},
+    {name:"4 pcs 2x2",price:35},
+    {name:"4 pcs 2x2 + 8 pcs 1x1",price:45},
+    {name:"4 pcs 2x2 + 4 pcs Passport + 4 pcs 1x1",price:55}
 ],
 
 "📑 Resume":[
-{name:"Resume Package",price:100}
+    {name:"Resume + 4 Free Copies + Soft Copy",price:100}
 ],
 
 "📋 Appointment":[
-{name:"Police Clearance",price:230}
+    {name:"Police Clearance Appointment",price:230}
 ]
 
 };
 
-const category=document.getElementById("category");
-const service=document.getElementById("service");
-const qty=document.getElementById("qty");
-const total=document.getElementById("total");
+const category = document.getElementById("category");
+const service = document.getElementById("service");
+const qty = document.getElementById("qty");
+const rush = document.getElementById("rush");
+const total = document.getElementById("total");
 
-for(let cat in products){
-let option=document.createElement("option");
-option.textContent=cat;
-option.value=cat;
-category.appendChild(option);
+const selectedCategory = document.getElementById("selectedCategory");
+const selectedService = document.getElementById("selectedService");
+const selectedQty = document.getElementById("selectedQty");
+
+for(const cat in products){
+
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+
+    category.appendChild(option);
 }
 
 function loadServices(){
 
-service.innerHTML="";
+    service.innerHTML = "";
 
-products[category.value].forEach(item=>{
+    products[category.value].forEach(item => {
 
-let option=document.createElement("option");
+        const option = document.createElement("option");
 
-option.value=item.price;
-option.textContent=
-`${item.name} - ₱${item.price}`;
+        option.value = item.price;
+        option.textContent = `${item.name} - ₱${item.price}`;
 
-service.appendChild(option);
+        service.appendChild(option);
+    });
 
-});
-
-calculate();
+    calculate();
 }
 
 function calculate(){
 
-let price=parseFloat(service.value)||0;
-let quantity=parseInt(qty.value)||1;
+    let price = parseFloat(service.value) || 0;
+    let quantity = parseInt(qty.value) || 1;
 
-total.textContent=
-(price*quantity).toFixed(2);
+    let totalAmount = price * quantity;
 
+    if(rush.checked){
+        totalAmount += 20;
+    }
+
+    total.textContent = totalAmount.toFixed(2);
+
+    selectedCategory.textContent = category.value;
+
+    selectedService.textContent =
+    service.options[service.selectedIndex]?.text || "-";
+
+    selectedQty.textContent = quantity;
 }
 
-category.addEventListener("change",loadServices);
-service.addEventListener("change",calculate);
-qty.addEventListener("input",calculate);
+category.addEventListener("change", loadServices);
+service.addEventListener("change", calculate);
+qty.addEventListener("input", calculate);
+rush.addEventListener("change", calculate);
 
 loadServices();
 
 function sendOrder(){
 
-const message=
+    const serviceText =
+    service.options[service.selectedIndex]?.text || "";
+
+    const message =
 `AS PRINTING ORDER
 
 Category: ${category.value}
-Service: ${service.options[service.selectedIndex].text}
+Service: ${serviceText}
 Quantity: ${qty.value}
-Total: ₱${total.textContent}`;
+Rush Service: ${rush.checked ? "Yes (+₱20)" : "No"}
+Total Amount: ₱${total.textContent}`;
 
-window.open(
-`https://m.me/1000997779774312?text=${encodeURIComponent(message)}`,
-"_blank"
-);
-
+    window.open(
+    `https://facebook.com/asmamburao/?text=${encodeURIComponent(message)}`,
+    "_blank"
+    );
 }
 
 </script>
 
 </body>
 </html>
+```
