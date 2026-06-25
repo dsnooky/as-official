@@ -1,331 +1,748 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AS Printing Calculator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AS PRINTING Sales Calculator</title>
 
-<style>
-:root{
-    --primary:#2563eb;
-    --secondary:#06b6d4;
-    --dark:#0f172a;
-    --card:#1e293b;
-    --success:#22c55e;
-    --white:#ffffff;
-}
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --primary:#0d47a1;
+      --primary2:#1976d2;
+      --line:#e5e7eb;
+      --soft:#f8fbff;
+      --success-bg:#ecfdf3;
+      --success-text:#166534;
+      --error-bg:#fef2f2;
+      --error-text:#991b1b;
+      --shadow:0 8px 25px rgba(0,0,0,.08);
+    }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Segoe UI',sans-serif;
-}
-
-body{
-    background:var(--dark);
-    color:white;
-    min-height:100vh;
-    padding:20px;
-}
-
-.container{
-    max-width:700px;
-    margin:auto;
-}
-
-.back-btn{
-    display:inline-block;
-    margin-bottom:20px;
-    color:white;
-    text-decoration:none;
-    font-weight:600;
-}
-
-.card{
-    background:var(--card);
-    border-radius:20px;
-    padding:25px;
-    box-shadow:0 10px 30px rgba(0,0,0,.25);
-}
-
-h1{
-    text-align:center;
-    margin-bottom:10px;
-}
-
-.subtitle{
-    text-align:center;
-    opacity:.8;
-    margin-bottom:25px;
-}
-
-.form-group{
-    margin-bottom:18px;
-}
-
-label{
-    display:block;
-    margin-bottom:8px;
-    font-weight:600;
-}
-
-select,
-input[type="number"]{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    font-size:16px;
-}
-
-.checkbox-group{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin:15px 0;
-}
-
-.checkbox-group input{
-    width:auto;
-}
-
-.summary{
-    background:rgba(255,255,255,.05);
-    border-radius:15px;
-    padding:20px;
-    margin-top:20px;
-}
-
-.summary p{
-    margin:8px 0;
-}
-
-.total{
-    text-align:center;
-    margin-top:15px;
-}
-
-.total h2{
-    color:var(--success);
-    font-size:2rem;
-}
-
-.btn{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:12px;
-    background:var(--success);
-    color:white;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:20px;
-}
-
-.btn:hover{
-    opacity:.9;
-}
-
-@media(max-width:768px){
-
+    *{box-sizing:border-box}
     body{
-        padding:15px;
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:24px 16px 40px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:32px;
+      color:var(--primary);
+    }
+
+    .brand p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .back-link{
+      text-decoration:none;
+      color:#fff;
+      background:var(--primary);
+      padding:12px 16px;
+      border-radius:12px;
+      font-weight:700;
+      display:inline-block;
+    }
+
+    .hero{
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      color:#fff;
+      padding:22px;
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+    }
+
+    .hero h2{
+      margin:0 0 6px;
+      font-size:26px;
+    }
+
+    .hero p{
+      margin:0;
+      opacity:.95;
+      font-size:14px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:20px;
     }
 
     .card{
-        padding:20px;
+      background:var(--card);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:20px;
     }
 
-    h1{
-        font-size:1.8rem;
+    .card h3{
+      margin:0 0 16px;
+      color:var(--primary);
+      font-size:22px;
     }
-}
-</style>
+
+    .form-group{
+      margin-bottom:14px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:6px;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    input, select, textarea{
+      width:100%;
+      padding:12px 14px;
+      border:1px solid #d8dee9;
+      border-radius:12px;
+      font-size:14px;
+      background:#fff;
+      outline:none;
+    }
+
+    input:focus, select:focus, textarea:focus{
+      border-color:var(--primary2);
+      box-shadow:0 0 0 3px rgba(25,118,210,.12);
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .total-box{
+      margin-top:10px;
+      margin-bottom:12px;
+      background:#f0f7ff;
+      border:2px dashed var(--primary2);
+      border-radius:14px;
+      padding:18px;
+    }
+
+    .total-box p{
+      margin:0 0 6px;
+      color:#4b5563;
+      font-size:14px;
+    }
+
+    .total-box h2{
+      margin:0;
+      color:var(--primary);
+      font-size:30px;
+    }
+
+    .btns{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:8px;
+    }
+
+    button{
+      border:none;
+      border-radius:12px;
+      padding:14px 16px;
+      font-weight:700;
+      cursor:pointer;
+      font-size:15px;
+    }
+
+    .btn-primary{
+      background:var(--primary2);
+      color:#fff;
+    }
+
+    .btn-primary:hover{ filter:brightness(.95); }
+
+    .btn-secondary{
+      background:#eef2f7;
+      color:#111827;
+    }
+
+    .btn-refresh{
+      background:var(--primary);
+      color:#fff;
+      width:100%;
+      margin-top:8px;
+    }
+
+    .msg{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:12px;
+      font-size:14px;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg.success{
+      background:var(--success-bg);
+      color:var(--success-text);
+    }
+
+    .msg.error{
+      background:var(--error-bg);
+      color:var(--error-text);
+    }
+
+    .loading{
+      display:none;
+      margin-top:10px;
+      color:var(--primary2);
+      font-weight:700;
+      font-size:14px;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .stat{
+      background:var(--soft);
+      border:1px solid #e8eef8;
+      border-radius:14px;
+      padding:16px;
+    }
+
+    .stat small{
+      display:block;
+      color:#6b7280;
+      margin-bottom:6px;
+      font-size:12px;
+    }
+
+    .stat strong{
+      font-size:22px;
+      color:var(--primary);
+      display:block;
+      word-break:break-word;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+      margin:8px 0 0;
+    }
+
+    .table-wrap{
+      margin-top:14px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:auto;
+      max-height:420px;
+      background:#fff;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+      min-width:520px;
+    }
+
+    th, td{
+      padding:10px 12px;
+      border-bottom:1px solid #eef1f5;
+      text-align:left;
+      vertical-align:top;
+    }
+
+    th{
+      background:#f8fbff;
+      color:var(--primary);
+      position:sticky;
+      top:0;
+    }
+
+    .contact-box{
+      margin-top:18px;
+      background:#f8fbff;
+      border:1px solid #dbeafe;
+      border-radius:14px;
+      padding:16px;
+    }
+
+    .contact-box h4{
+      margin:0 0 10px;
+      color:var(--primary);
+      font-size:18px;
+    }
+
+    .contact-box p{
+      margin:0 0 8px;
+      font-size:14px;
+    }
+
+    .footer-note{
+      margin-top:24px;
+      text-align:center;
+      color:#6b7280;
+      font-size:13px;
+    }
+
+    @media (max-width: 920px){
+      .grid{ grid-template-columns:1fr; }
+      .row, .btns, .stats{ grid-template-columns:1fr; }
+      .brand h1{ font-size:26px; }
+      .hero h2{ font-size:22px; }
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <h1 id="storeName">AS PRINTING</h1>
+        <p>Printing Sales Calculator • Daily Sales Recording • GitHub Frontend + Google Sheets Backend</p>
+      </div>
+      <a href="./index.html" class="back-link">← Back to Home</a>
+    </div>
 
-<div class="container">
+    <div class="hero">
+      <h2>Sales Calculator & Daily Recording</h2>
+      <p>Fast pricing, quick sales entry, and dashboard tracking for AS PRINTING.</p>
+    </div>
 
-<a href="index.html" class="back-btn">← Back to Services</a>
+    <div class="grid">
+      <!-- LEFT -->
+      <section class="card">
+        <h3>Sales Entry</h3>
 
-<div class="card">
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category">
+            <option value="">Select category</option>
+          </select>
+        </div>
 
-<h1>🧮 AS Printing Calculator</h1>
-<p class="subtitle">Calculate your order instantly</p>
+        <div class="form-group">
+          <label for="service">Service</label>
+          <select id="service">
+            <option value="">Select service</option>
+          </select>
+        </div>
 
-<div class="form-group">
-<label>Category</label>
-<select id="category"></select>
-</div>
+        <div class="row">
+          <div class="form-group">
+            <label for="qty">Quantity</label>
+            <input type="number" id="qty" min="1" value="1" />
+          </div>
 
-<div class="form-group">
-<label>Service</label>
-<select id="service"></select>
-</div>
+          <div class="form-group">
+            <label for="unitPrice">Unit Price</label>
+            <input type="number" id="unitPrice" readonly />
+          </div>
+        </div>
 
-<div class="form-group">
-<label>Quantity</label>
-<input type="number" id="qty" value="1" min="1">
-</div>
+        <div class="row">
+          <div class="form-group">
+            <label for="paymentMethod">Payment Method</label>
+            <select id="paymentMethod">
+              <option value="">Select payment method</option>
+              <option value="Cash">Cash</option>
+              <option value="GCash">GCash</option>
+              <option value="Maya">Maya</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+          </div>
 
-<div class="checkbox-group">
-<input type="checkbox" id="rush">
-<label for="rush">Rush Service (+₱5)</label>
-</div>
+          <div class="form-group">
+            <label for="unit">Unit</label>
+            <input type="text" id="unit" readonly />
+          </div>
+        </div>
 
-<div class="summary">
-<p><strong>Category:</strong> <span id="selectedCategory">-</span></p>
-<p><strong>Service:</strong> <span id="selectedService">-</span></p>
-<p><strong>Quantity:</strong> <span id="selectedQty">1</span></p>
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea id="notes" rows="3" placeholder="Optional notes..."></textarea>
+        </div>
 
-<div class="total">
-<h3>Total Amount</h3>
-<h2>₱<span id="total">0.00</span></h2>
-</div>
-</div>
+        <div class="total-box">
+          <p>Total Amount</p>
+          <h2 id="totalDisplay">₱0.00</h2>
+        </div>
 
-<button class="btn" onclick="sendOrder()">
-📩 Order via Messenger
-</button>
+        <div class="btns">
+          <button class="btn-primary" onclick="saveSale()">Save Sale</button>
+          <button class="btn-secondary" onclick="resetForm()">Reset Form</button>
+        </div>
 
-</div>
+        <div class="loading" id="loading">Saving sale...</div>
+        <div class="msg success" id="successMsg"></div>
+        <div class="msg error" id="errorMsg"></div>
 
-</div>
+        <div class="contact-box">
+          <h4>Contact Us / Customer Care</h4>
+          <p><strong>Store:</strong> <span id="contactStore">AS PRINTING</span></p>
+          <p><strong>Contact Number:</strong> <span id="contactNumber">09620926818</span></p>
+          <p><strong>Customer Care Hotline:</strong> <span id="hotline">Same as contact number</span></p>
+          <p><strong>Facebook:</strong> <a id="facebookPage" href="https://www.facebook.com/ddsnooky" target="_blank" rel="noopener">Visit Page</a></p>
+        </div>
+      </section>
 
-<script>
+      <!-- RIGHT -->
+      <section class="card">
+        <h3>Dashboard</h3>
 
-const products = {
+        <div class="stats">
+          <div class="stat">
+            <small>Today's Sales</small>
+            <strong id="todaySales">₱0.00</strong>
+          </div>
+          <div class="stat">
+            <small>Monthly Sales</small>
+            <strong id="monthlySales">₱0.00</strong>
+          </div>
+          <div class="stat">
+            <small>Total Transactions</small>
+            <strong id="totalTransactions">0</strong>
+          </div>
+          <div class="stat">
+            <small>Top Service</small>
+            <strong id="topService">-</strong>
+          </div>
+        </div>
 
-"📄 Xerox":[
-    {name:"B&W Short",price:4},
-    {name:"B&W Long",price:5},
-    {name:"Birth/Marriage/Death Certificate",price:10},
-    {name:"Valid I.D (B&W)",price:5},
-    {name:"Valid I.D (Colored)",price:8},
-    {name:"Colored Short",price:6},
-    {name:"Colored Long",price:7}
-],
+        <button class="btn-refresh" onclick="loadDashboard()">Refresh Dashboard</button>
+        <p class="muted">Recent 10 sales are shown below.</p>
 
-"🖨️ Printing":[
-    {name:"A4/Short",price:5},
-    {name:"Long",price:6},
-    {name:"Valid I.D",price:10},
-    {name:"Birth/Marriage/Death Certificate",price:10},
-    {name:"Image w/ Text (A4/Short)",price:10},
-    {name:"Image w/ Text (Long)",price:15},
-    {name:"Full Image (A4/Short)",price:15},
-    {name:"Full Image (Long)",price:20}
-],
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Service</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="recentSalesTable">
+              <tr>
+                <td colspan="4">Loading sales...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
 
-"🏷️ Stickers":[
-    {name:"A4 Sticker",price:50}
-],
+    <p class="footer-note">AS PRINTING • GitHub Pages + Google Sheets POS Setup</p>
+  </div>
 
-"🪪 Photo ID":[
-    {name:"8 pcs 1x1",price:35},
-    {name:"4 pcs 2x2",price:35},
-    {name:"4 pcs 2x2 + 8 pcs 1x1",price:45},
-    {name:"4 pcs 2x2 + 4 pcs Passport + 4 pcs 1x1",price:55}
-],
+  <script>
+    // =========================================================
+    // IMPORTANT:
+    // Replace this with your deployed Apps Script Web App URL
+    // Example:
+    // const API_URL = "https://script.google.com/macros/s/AKfycbxxxxxx/exec";
+    // =========================================================
+    const API_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
 
-"📑 Resume":[
-    {name:"Resume + 4 Free Copies + Soft Copy",price:100}
-],
+    let priceList = [];
+    let settings = {};
+    let selectedItem = null;
 
-"📋 Appointment":[
-    {name:"Police Clearance Appointment",price:230}
-]
-
-};
-
-const category = document.getElementById("category");
-const service = document.getElementById("service");
-const qty = document.getElementById("qty");
-const rush = document.getElementById("rush");
-const total = document.getElementById("total");
-
-const selectedCategory = document.getElementById("selectedCategory");
-const selectedService = document.getElementById("selectedService");
-const selectedQty = document.getElementById("selectedQty");
-
-for(const cat in products){
-
-    const option = document.createElement("option");
-    option.value = cat;
-    option.textContent = cat;
-
-    category.appendChild(option);
-}
-
-function loadServices(){
-
-    service.innerHTML = "";
-
-    products[category.value].forEach(item => {
-
-        const option = document.createElement("option");
-
-        option.value = item.price;
-        option.textContent = `${item.name} - ₱${item.price}`;
-
-        service.appendChild(option);
-    });
-
-    calculate();
-}
-
-function calculate(){
-
-    let price = parseFloat(service.value) || 0;
-    let quantity = parseInt(qty.value) || 1;
-
-    let totalAmount = price * quantity;
-
-    if(rush.checked){
-        totalAmount += 5;
+    function formatPeso(value) {
+      return '₱' + Number(value || 0).toLocaleString('en-PH', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     }
 
-    total.textContent = totalAmount.toFixed(2);
+    function escapeHtml(text) {
+      if (text === null || text === undefined) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
 
-    selectedCategory.textContent = category.value;
+    function showSuccess(message) {
+      const box = document.getElementById('successMsg');
+      const error = document.getElementById('errorMsg');
+      error.style.display = 'none';
+      box.textContent = message || 'Success';
+      box.style.display = 'block';
 
-    selectedService.textContent =
-    service.options[service.selectedIndex]?.text || "-";
+      setTimeout(() => {
+        box.style.display = 'none';
+      }, 3000);
+    }
 
-    selectedQty.textContent = quantity;
-}
+    function showError(message) {
+      const box = document.getElementById('errorMsg');
+      const success = document.getElementById('successMsg');
+      success.style.display = 'none';
+      box.textContent = message || 'Something went wrong.';
+      box.style.display = 'block';
+    }
 
-category.addEventListener("change", loadServices);
-service.addEventListener("change", calculate);
-qty.addEventListener("input", calculate);
-rush.addEventListener("change", calculate);
+    function clearMessages() {
+      document.getElementById('successMsg').style.display = 'none';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
 
-loadServices();
+    async function apiGet(action) {
+      const url = `${API_URL}?action=${encodeURIComponent(action)}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Network error while loading data.');
+      return await res.json();
+    }
 
-function sendOrder(){
+    async function apiPost(payload) {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
 
-    const serviceText =
-    service.options[service.selectedIndex]?.text || "";
+      if (!res.ok) throw new Error('Network error while saving data.');
+      return await res.json();
+    }
 
-    const message =
-`AS PRINTING ORDER
+    async function init() {
+      clearMessages();
 
-Category: ${category.value}
-Service: ${serviceText}
-Quantity: ${qty.value}
-Rush Service: ${rush.checked ? "Yes (+₱5)" : "No"}
-Total Amount: ₱${total.textContent}`;
+      if (!API_URL || API_URL.includes('PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE')) {
+        showError('Please paste your Apps Script Web App URL inside calculator.html first.');
+        return;
+      }
 
-    window.open(
-    `https://facebook.com/asmamburao/?text=${encodeURIComponent(message)}`,
-    "_blank"
-    );
-}
+      try {
+        const [pricesRes, settingsRes] = await Promise.all([
+          apiGet('getPriceList'),
+          apiGet('getSettings')
+        ]);
 
-</script>
+        if (!pricesRes.success) throw new Error(pricesRes.message || 'Failed to load price list.');
+        if (!settingsRes.success) throw new Error(settingsRes.message || 'Failed to load settings.');
 
+        priceList = pricesRes.data || [];
+        settings = settingsRes.data || {};
+
+        populateCategories();
+        applySettings();
+        setupEvents();
+        await loadDashboard();
+      } catch (error) {
+        showError(error.message || 'Failed to initialize calculator.');
+      }
+    }
+
+    function applySettings() {
+      const storeName = settings['Store Name'] || 'AS PRINTING';
+      const contactNumber = settings['Contact Number'] || '09620926818';
+      const hotline = settings['Customer Care Hotline'] || 'Same as contact number';
+      const fb = settings['Facebook Page'] || 'https://www.facebook.com/ddsnooky';
+
+      document.getElementById('storeName').textContent = storeName;
+      document.getElementById('contactStore').textContent = storeName;
+      document.getElementById('contactNumber').textContent = contactNumber;
+      document.getElementById('hotline').textContent = hotline;
+      document.getElementById('facebookPage').href = fb;
+    }
+
+    function setupEvents() {
+      document.getElementById('category').addEventListener('change', onCategoryChange);
+      document.getElementById('service').addEventListener('change', onServiceChange);
+      document.getElementById('qty').addEventListener('input', computeTotal);
+    }
+
+    function populateCategories() {
+      const categorySelect = document.getElementById('category');
+      const categories = [...new Set(priceList.map(item => item.category))];
+
+      categorySelect.innerHTML = '<option value="">Select category</option>';
+      categories.forEach(cat => {
+        categorySelect.innerHTML += `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`;
+      });
+    }
+
+    function onCategoryChange() {
+      clearMessages();
+
+      const category = document.getElementById('category').value;
+      const serviceSelect = document.getElementById('service');
+
+      serviceSelect.innerHTML = '<option value="">Select service</option>';
+      document.getElementById('unitPrice').value = '';
+      document.getElementById('unit').value = '';
+      document.getElementById('totalDisplay').textContent = formatPeso(0);
+      selectedItem = null;
+
+      if (!category) return;
+
+      const services = priceList.filter(item => item.category === category);
+      services.forEach(item => {
+        serviceSelect.innerHTML += `<option value="${escapeHtml(item.service)}">${escapeHtml(item.service)}</option>`;
+      });
+    }
+
+    function onServiceChange() {
+      clearMessages();
+
+      const category = document.getElementById('category').value;
+      const service = document.getElementById('service').value;
+
+      selectedItem = priceList.find(item => item.category === category && item.service === service);
+
+      if (selectedItem) {
+        document.getElementById('unitPrice').value = selectedItem.price;
+        document.getElementById('unit').value = selectedItem.unit || '';
+      } else {
+        document.getElementById('unitPrice').value = '';
+        document.getElementById('unit').value = '';
+      }
+
+      computeTotal();
+    }
+
+    function computeTotal() {
+      const qty = Number(document.getElementById('qty').value) || 0;
+      const unitPrice = Number(document.getElementById('unitPrice').value) || 0;
+      const total = qty * unitPrice;
+      document.getElementById('totalDisplay').textContent = formatPeso(total);
+      return total;
+    }
+
+    async function saveSale() {
+      clearMessages();
+
+      const category = document.getElementById('category').value;
+      const service = document.getElementById('service').value;
+      const qty = Number(document.getElementById('qty').value) || 0;
+      const unitPrice = Number(document.getElementById('unitPrice').value) || 0;
+      const paymentMethod = document.getElementById('paymentMethod').value;
+      const notes = document.getElementById('notes').value.trim();
+      const total = computeTotal();
+
+      if (!category || !service) {
+        showError('Please select category and service.');
+        return;
+      }
+
+      if (qty <= 0) {
+        showError('Please enter a valid quantity.');
+        return;
+      }
+
+      if (!paymentMethod) {
+        showError('Please select a payment method.');
+        return;
+      }
+
+      const saleData = {
+        action: 'saveSale',
+        sale: {
+          category,
+          service,
+          qty,
+          unitPrice,
+          total,
+          paymentMethod,
+          notes
+        }
+      };
+
+      const loading = document.getElementById('loading');
+      loading.style.display = 'block';
+
+      try {
+        const result = await apiPost(saleData);
+        loading.style.display = 'none';
+
+        if (!result.success) {
+          throw new Error(result.message || 'Failed to save sale.');
+        }
+
+        showSuccess(result.message || 'Sale saved successfully!');
+        resetForm(false);
+        await loadDashboard();
+      } catch (error) {
+        loading.style.display = 'none';
+        showError(error.message || 'Failed to save sale.');
+      }
+    }
+
+    function resetForm(clearMsg = true) {
+      document.getElementById('category').value = '';
+      document.getElementById('service').innerHTML = '<option value="">Select service</option>';
+      document.getElementById('qty').value = 1;
+      document.getElementById('unitPrice').value = '';
+      document.getElementById('paymentMethod').value = '';
+      document.getElementById('unit').value = '';
+      document.getElementById('notes').value = '';
+      document.getElementById('totalDisplay').textContent = formatPeso(0);
+      selectedItem = null;
+
+      if (clearMsg) clearMessages();
+    }
+
+    async function loadDashboard() {
+      try {
+        const res = await apiGet('getDashboardData');
+        if (!res.success) throw new Error(res.message || 'Failed to load dashboard.');
+
+        const data = res.data || {};
+        document.getElementById('todaySales').textContent = formatPeso(data.todaySales || 0);
+        document.getElementById('monthlySales').textContent = formatPeso(data.monthlySales || 0);
+        document.getElementById('totalTransactions').textContent = data.totalTransactions || 0;
+        document.getElementById('topService').textContent = data.topService || '-';
+
+        const table = document.getElementById('recentSalesTable');
+
+        if (!data.recentSales || data.recentSales.length === 0) {
+          table.innerHTML = '<tr><td colspan="4">No sales yet.</td></tr>';
+          return;
+        }
+
+        table.innerHTML = data.recentSales.map(item => `
+          <tr>
+            <td>${escapeHtml(item.date)}</td>
+            <td>${escapeHtml(item.time)}</td>
+            <td>${escapeHtml(item.service)}</td>
+            <td>${formatPeso(item.total)}</td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        showError(error.message || 'Failed to load dashboard.');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
-```
