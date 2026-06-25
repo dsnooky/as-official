@@ -784,6 +784,334 @@ alert("Google Sheets integration will be connected in Part 2.");
 document.getElementById("orNo").value=
 "OR-"+Date.now();
 
+  /*=========================================
+        PRINTING POS SYSTEM
+        PART 2A
+==========================================*/
+
+/*
+Replace this after deploying your
+Google Apps Script Web App
+*/
+
+const WEBAPP_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+
+/*=========================================
+GLOBAL VARIABLES
+==========================================*/
+
+let priceList = [];
+let categoryList = [];
+
+/*=========================================
+PAGE LOAD
+==========================================*/
+
+window.onload = function () {
+
+    generateOR();
+
+    loadPriceList();
+
+}
+
+/*=========================================
+GENERATE OR NUMBER
+==========================================*/
+
+function generateOR(){
+
+    const d = new Date();
+
+    document.getElementById("orNo").value =
+        "OR" +
+        d.getFullYear() +
+        (d.getMonth()+1) +
+        d.getDate() +
+        "-" +
+        Date.now();
+
+}
+
+/*=========================================
+LOAD PRICE LIST
+==========================================*/
+
+async function loadPriceList(){
+
+    try{
+
+        const response = await fetch(
+
+            WEBAPP_URL + "?action=getPrices"
+
+        );
+
+        const data = await response.json();
+
+        priceList = data;
+
+        loadCategories();
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        alert("Unable to load price list.");
+
+    }
+
+}
+
+/*=========================================
+LOAD CATEGORIES
+==========================================*/
+
+function loadCategories(){
+
+    let categories=[];
+
+    priceList.forEach(item=>{
+
+        if(!categories.includes(item.category))
+            categories.push(item.category);
+
+    });
+
+    categoryList=categories;
+
+    const select=document.getElementById("category");
+
+    select.innerHTML="";
+
+    let option=document.createElement("option");
+
+    option.text="Select Category";
+
+    option.value="";
+
+    select.appendChild(option);
+
+    categories.forEach(cat=>{
+
+        let op=document.createElement("option");
+
+        op.value=cat;
+
+        op.text=cat;
+
+        select.appendChild(op);
+
+    });
+
+}
+
+/*=========================================
+CATEGORY CHANGE
+==========================================*/
+
+document
+.getElementById("category")
+.addEventListener("change",loadServices);
+
+/*=========================================
+LOAD SERVICES
+==========================================*/
+
+function loadServices(){
+
+    const category=
+
+    document.getElementById("category").value;
+
+    const service=
+
+    document.getElementById("service");
+
+    service.innerHTML="";
+
+    let first=document.createElement("option");
+
+    first.text="Select Service";
+
+    first.value="";
+
+    service.appendChild(first);
+
+    priceList.forEach(item=>{
+
+        if(item.category==category){
+
+            let option=document.createElement("option");
+
+            option.value=item.service;
+
+            option.text=item.service;
+
+            service.appendChild(option);
+
+        }
+
+    });
+
+}
+
+/*=========================================
+SERVICE CHANGE
+==========================================*/
+
+document
+.getElementById("service")
+.addEventListener("change",loadPrice);
+
+/*=========================================
+LOAD PRICE
+==========================================*/
+
+function loadPrice(){
+
+    const category=
+
+    document.getElementById("category").value;
+
+    const service=
+
+    document.getElementById("service").value;
+
+    const result=
+
+    priceList.find(item=>
+
+        item.category==category &&
+
+        item.service==service
+
+    );
+
+    if(result){
+
+        document.getElementById("price").value=result.price;
+
+    }
+
+    else{
+
+        document.getElementById("price").value=0;
+
+    }
+
+    calculateTotal();
+
+}
+
+/*=========================================
+AUTO CALCULATE
+==========================================*/
+
+document
+.getElementById("qty")
+.addEventListener("input",calculateTotal);
+
+document
+.getElementById("discount")
+.addEventListener("input",calculateTotal);
+
+/*=========================================
+CALCULATE TOTAL
+==========================================*/
+
+function calculateTotal(){
+
+    let qty=
+
+    Number(document.getElementById("qty").value);
+
+    let price=
+
+    Number(document.getElementById("price").value);
+
+    let discount=
+
+    Number(document.getElementById("discount").value);
+
+    if(qty<1) qty=1;
+
+    if(discount<0) discount=0;
+
+    let subtotal=
+
+    qty*price;
+
+    let discountAmount=
+
+    subtotal*(discount/100);
+
+    let total=
+
+    subtotal-discountAmount;
+
+    document.getElementById("grandTotal").innerHTML=
+
+    "₱"+total.toFixed(2);
+
+    previewReceipt(total);
+
+}
+
+/*=========================================
+RECEIPT PREVIEW
+==========================================*/
+
+function previewReceipt(total){
+
+    document.getElementById("rCustomer").innerHTML=
+
+    document.getElementById("customer").value;
+
+    document.getElementById("rService").innerHTML=
+
+    document.getElementById("service").value;
+
+    document.getElementById("rQty").innerHTML=
+
+    document.getElementById("qty").value;
+
+    document.getElementById("rPrice").innerHTML=
+
+    "₱"+
+
+    Number(document.getElementById("price").value).toFixed(2);
+
+    document.getElementById("rTotal").innerHTML=
+
+    "₱"+total.toFixed(2);
+
+}
+
+/*=========================================
+PRINT RECEIPT
+==========================================*/
+
+function printReceipt(){
+
+    window.print();
+
+}
+
+/*=========================================
+SAVE SALE
+
+PART 2B
+==========================================*/
+
+function saveSale(){
+
+    alert("Coming in Part 2B");
+
+}
+
 <script src="script.js"></script>
 </body>
 </html>
