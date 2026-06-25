@@ -1,120 +1,312 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AS PRINTING POS</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Printing Sales Calculator</title>
+
 <style>
-body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0}
-header{background:#0d6efd;color:#fff;padding:15px;text-align:center}
-.container{max-width:1100px;margin:auto;padding:20px}
-.card{background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1);margin-bottom:15px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-input,select,button{width:100%;padding:10px;margin:5px 0}
-button{background:#0d6efd;color:white;border:none;cursor:pointer}
-.total{font-size:28px;font-weight:bold;color:green}
-table{width:100%;border-collapse:collapse}
-th,td{border:1px solid #ddd;padding:8px}
-@media(max-width:768px){.grid{grid-template-columns:1fr}}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f6f9;
+padding:15px;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+}
+
+.card{
+background:#fff;
+padding:20px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+margin-bottom:15px;
+}
+
+h1{
+text-align:center;
+color:#0d6efd;
+margin-bottom:15px;
+}
+
+label{
+display:block;
+margin-top:10px;
+font-weight:bold;
+}
+
+select,input{
+width:100%;
+padding:12px;
+margin-top:5px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+.price-box{
+margin-top:15px;
+font-size:20px;
+font-weight:bold;
+color:#198754;
+}
+
+.total-box{
+font-size:28px;
+font-weight:bold;
+color:#dc3545;
+margin-top:10px;
+}
+
+button{
+width:100%;
+padding:14px;
+background:#0d6efd;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+margin-top:15px;
+cursor:pointer;
+}
+
+button:hover{
+background:#084298;
+}
+
+.contact{
+text-align:center;
+line-height:1.8;
+}
+
+.sales-table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+.sales-table th,
+.sales-table td{
+border:1px solid #ddd;
+padding:8px;
+text-align:center;
+}
+
+.sales-table th{
+background:#0d6efd;
+color:white;
+}
+
+@media(max-width:600px){
+h1{
+font-size:22px;
+}
+}
+
 </style>
 </head>
+
 <body>
-<header><h2>AS PRINTING SALES CALCULATOR & POS</h2></header>
 
 <div class="container">
-<div class="grid">
 
 <div class="card">
-<h3>Sales Entry</h3>
-<input id="customer" placeholder="Customer Name">
-<select id="category"></select>
-<select id="service"></select>
-<input id="qty" type="number" value="1">
-<input id="price" readonly>
-<div class="total">₱ <span id="total">0.00</span></div>
-<button onclick="saveSale()">Record Sale</button>
+
+<h1>🖨 Printing Sales Calculator</h1>
+
+<label>Product</label>
+<select id="product"></select>
+
+<label>Quantity</label>
+<input type="number" id="qty" value="1">
+
+<div class="price-box">
+Price: ₱<span id="price">0</span>
+</div>
+
+<div class="total-box">
+Total: ₱<span id="total">0</span>
+</div>
+
+<button onclick="saveSale()">
+Save Sale
+</button>
+
 </div>
 
 <div class="card">
-<h3>Contact Us</h3>
-<p><b>Store:</b> AS PRINTING</p>
-<p><b>Customer Care Hotline:</b> 09620926818</p>
-<p><b>Facebook:</b> https://www.facebook.com/ddsnooky</p>
-</div>
 
-</div>
-
-<div class="card">
 <h3>Today's Sales</h3>
-<table>
-<thead><tr><th>Date</th><th>Customer</th><th>Service</th><th>Total</th></tr></thead>
-<tbody id="salesTable"></tbody>
+
+<table class="sales-table">
+
+<thead>
+<tr>
+<th>Product</th>
+<th>Qty</th>
+<th>Total</th>
+</tr>
+</thead>
+
+<tbody id="salesBody"></tbody>
+
 </table>
+
+<h2 style="margin-top:15px;color:green;">
+Daily Total:
+₱<span id="dailyTotal">0</span>
+</h2>
+
 </div>
+
+<div class="card contact">
+
+<h3>Contact Us</h3>
+
+<p>ABC Printing Services</p>
+
+<p>📞 Customer Care Hotline</p>
+
+<p><b>0917-123-4567</b></p>
+
+<p>✉ abcprinting@gmail.com</p>
+
+<p>🌐 www.abcprinting.com</p>
+
+</div>
+
 </div>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxl0GKuSS-ij1w1PGL6dbdjXkkFaV4s4Vqa1FBvn5TDjgzqfh5Qwgxgcg9i4Pxsdm8BuA/exec";
-let priceData=[];
 
-async function loadPrices(){
- const r=await fetch(SCRIPT_URL+"?action=prices");
- priceData=await r.json();
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbwbYyFVCePRhJYsmJa8HmViNb2so8eMmjL4hDipNPgYhidoeHq0TRjeqSdwXuvizdpRsA/exec";
 
- let categories=[...new Set(priceData.map(x=>x.Category))];
- let cat=document.getElementById("category");
- cat.innerHTML=categories.map(c=>`<option>${c}</option>`).join("");
- loadServices();
-}
+let products = [];
+let dailyTotal = 0;
 
-function loadServices(){
- let cat=document.getElementById("category").value;
- let services=priceData.filter(x=>x.Category===cat);
+fetch(SCRIPT_URL)
+.then(r=>r.json())
+.then(data=>{
 
- let s=document.getElementById("service");
- s.innerHTML=services.map(x=>`<option>${x.Service}</option>`).join("");
- calculate();
-}
+products=data;
 
-function calculate(){
- let srv=document.getElementById("service").value;
- let item=priceData.find(x=>x.Service===srv);
- if(!item)return;
+const select =
+document.getElementById("product");
 
- document.getElementById("price").value=item.Price;
+data.forEach((p,index)=>{
 
- let qty=parseFloat(document.getElementById("qty").value||0);
- let total=qty*parseFloat(item.Price);
+let option =
+document.createElement("option");
 
- document.getElementById("total").innerText=total.toFixed(2);
-}
+option.value=index;
+option.textContent=p.name;
 
-async function saveSale(){
- let payload={
- customer:document.getElementById("customer").value,
- category:document.getElementById("category").value,
- service:document.getElementById("service").value,
- qty:document.getElementById("qty").value,
- unitPrice:document.getElementById("price").value,
- total:document.getElementById("total").innerText
- };
+select.appendChild(option);
 
- await fetch(SCRIPT_URL,{
- method:"POST",
- body:JSON.stringify(payload)
- });
-
- alert("Sale Recorded!");
-}
-
-document.addEventListener("change",e=>{
- if(["category","service","qty"].includes(e.target.id)){
-   if(e.target.id==="category") loadServices();
-   calculate();
- }
 });
 
-loadPrices();
+updatePrice();
+
+});
+
+document.getElementById("product")
+.addEventListener("change",updatePrice);
+
+document.getElementById("qty")
+.addEventListener("input",updatePrice);
+
+function updatePrice(){
+
+let product =
+products[
+document.getElementById("product").value
+];
+
+if(!product) return;
+
+let qty =
+Number(document.getElementById("qty").value);
+
+let total =
+qty * Number(product.price);
+
+document.getElementById("price")
+.innerText=product.price;
+
+document.getElementById("total")
+.innerText=total.toFixed(2);
+
+}
+
+function saveSale(){
+
+let product =
+products[
+document.getElementById("product").value
+];
+
+let qty =
+Number(document.getElementById("qty").value);
+
+let total =
+qty * Number(product.price);
+
+fetch(SCRIPT_URL,{
+method:"POST",
+body:JSON.stringify({
+product:product.name,
+qty:qty,
+price:product.price,
+total:total
+})
+})
+.then(r=>r.json())
+.then(res=>{
+
+if(res.success){
+
+let row =
+`
+<tr>
+<td>${product.name}</td>
+<td>${qty}</td>
+<td>₱${total}</td>
+</tr>
+`;
+
+document.getElementById("salesBody")
+.insertAdjacentHTML(
+"beforeend",
+row
+);
+
+dailyTotal += total;
+
+document.getElementById(
+"dailyTotal"
+).innerText =
+dailyTotal.toFixed(2);
+
+alert("Sale Saved Successfully!");
+
+}
+
+});
+
+}
+
 </script>
+
 </body>
 </html>
