@@ -189,28 +189,40 @@ Daily Total:
 
 <script>
 
-const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbwbYyFVCePRhJYsmJa8HmViNb2so8eMmjL4hDipNPgYhidoeHq0TRjeqSdwXuvizdpRsA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwbYyFVCePRhJYsmJa8HmViNb2so8eMmjL4hDipNPgYhidoeHq0TRjeqSdwXuvizdpRsA/exec";
 
 let products = [];
 let dailyTotal = 0;
 
+// Load Products
+window.onload = loadProducts;
+
+function loadProducts(){
+
 fetch(SCRIPT_URL)
-.then(r=>r.json())
+.then(response=>{
+
+if(!response.ok){
+throw new Error("Cannot connect to Google Apps Script");
+}
+
+return response.json();
+
+})
 .then(data=>{
 
 products=data;
 
-const select =
-document.getElementById("product");
+const select=document.getElementById("product");
 
-data.forEach((p,index)=>{
+select.innerHTML="";
 
-let option =
-document.createElement("option");
+products.forEach((item,index)=>{
+
+let option=document.createElement("option");
 
 option.value=index;
-option.textContent=p.name;
+option.text=item.name;
 
 select.appendChild(option);
 
@@ -218,89 +230,116 @@ select.appendChild(option);
 
 updatePrice();
 
+})
+.catch(error=>{
+
+console.error(error);
+
+alert("Unable to load products.\n\n"+error);
+
 });
-
-document.getElementById("product")
-.addEventListener("change",updatePrice);
-
-document.getElementById("qty")
-.addEventListener("input",updatePrice);
-
-function updatePrice(){
-
-let product =
-products[
-document.getElementById("product").value
-];
-
-if(!product) return;
-
-let qty =
-Number(document.getElementById("qty").value);
-
-let total =
-qty * Number(product.price);
-
-document.getElementById("price")
-.innerText=product.price;
-
-document.getElementById("total")
-.innerText=total.toFixed(2);
 
 }
 
-function saveSale(){
+// Calculate
 
-let product =
-products[
+document.getElementById("product").addEventListener("change",updatePrice);
+document.getElementById("qty").addEventListener("input",updatePrice);
+
+function updatePrice(){
+
+if(products.length==0)return;
+
+const product=products[
 document.getElementById("product").value
 ];
 
-let qty =
-Number(document.getElementById("qty").value);
+const qty=parseFloat(document.getElementById("qty").value)||0;
 
-let total =
-qty * Number(product.price);
+const total=qty*Number(product.price);
+
+document.getElementById("price").innerHTML=Number(product.price).toFixed(2);
+
+document.getElementById("total").innerHTML=total.toFixed(2);
+
+}
+
+// Save Sale
+
+function saveSale(){
+
+if(products.length==0){
+
+alert("Products not loaded.");
+
+return;
+
+}
+
+const product=products[
+document.getElementById("product").value
+];
+
+const qty=parseFloat(document.getElementById("qty").value)||0;
+
+if(qty<=0){
+
+alert("Enter valid quantity.");
+
+return;
+
+}
+
+const total=qty*Number(product.price);
+
+const formData=new URLSearchParams();
+
+formData.append("product",product.name);
+formData.append("qty",qty);
+formData.append("price",product.price);
+formData.append("total",total);
 
 fetch(SCRIPT_URL,{
 method:"POST",
-body:JSON.stringify({
-product:product.name,
-qty:qty,
-price:product.price,
-total:total
+body:formData
 })
-})
-.then(r=>r.json())
+.then(response=>response.json())
 .then(res=>{
 
 if(res.success){
 
-let row =
-`
+let row=`
 <tr>
 <td>${product.name}</td>
 <td>${qty}</td>
-<td>₱${total}</td>
+<td>₱${total.toFixed(2)}</td>
 </tr>
 `;
 
-document.getElementById("salesBody")
-.insertAdjacentHTML(
-"beforeend",
-row
-);
+document.getElementById("salesBody").insertAdjacentHTML("beforeend",row);
 
-dailyTotal += total;
+dailyTotal+=total;
 
-document.getElementById(
-"dailyTotal"
-).innerText =
-dailyTotal.toFixed(2);
+document.getElementById("dailyTotal").innerHTML=dailyTotal.toFixed(2);
 
-alert("Sale Saved Successfully!");
+document.getElementById("qty").value=1;
+
+updatePrice();
+
+alert("Sale saved successfully.");
+
+}else{
+
+alert("Failed to save sale.");
 
 }
+
+})
+.catch(error=>{
+
+console.error(error);
+
+alert("Error saving sale.\n\n"+error);
 
 });
 
