@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Printing Sales Calculator</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -13,339 +15,777 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+font-family:'Poppins',sans-serif;
 }
 
 body{
-background:#f4f6f9;
-padding:15px;
+background:#f3f5f9;
+color:#333;
+}
+
+header{
+
+background:#1565c0;
+color:white;
+padding:18px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+
+}
+
+header h1{
+
+font-size:26px;
+
+}
+
+header p{
+
+font-size:14px;
+
 }
 
 .container{
-max-width:600px;
+
+width:95%;
+max-width:1400px;
 margin:auto;
+padding:20px;
+
+}
+
+.cards{
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:25px;
+
 }
 
 .card{
-background:#fff;
+
+background:white;
+border-radius:12px;
 padding:20px;
-border-radius:15px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
-margin-bottom:15px;
+box-shadow:0 3px 8px rgba(0,0,0,.12);
+
 }
 
-h1{
-text-align:center;
-color:#0d6efd;
+.card h3{
+
+font-size:16px;
+margin-bottom:8px;
+
+}
+
+.card h2{
+
+font-size:30px;
+color:#1565c0;
+
+}
+
+.main{
+
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:20px;
+
+}
+
+@media(max-width:900px){
+
+.main{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+.panel{
+
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 3px 8px rgba(0,0,0,.12);
+
+}
+
+.panel h2{
+
 margin-bottom:15px;
+
+}
+
+.row{
+
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+
+}
+
+@media(max-width:700px){
+
+.row{
+
+grid-template-columns:1fr;
+
+}
+
 }
 
 label{
+
 display:block;
-margin-top:10px;
-font-weight:bold;
+margin-bottom:6px;
+font-size:14px;
+
 }
 
-select,input{
+input,select{
+
 width:100%;
 padding:12px;
-margin-top:5px;
-border:1px solid #ddd;
+border:1px solid #ccc;
 border-radius:8px;
-}
+font-size:15px;
 
-.price-box{
-margin-top:15px;
-font-size:20px;
-font-weight:bold;
-color:#198754;
-}
-
-.total-box{
-font-size:28px;
-font-weight:bold;
-color:#dc3545;
-margin-top:10px;
 }
 
 button{
-width:100%;
-padding:14px;
-background:#0d6efd;
-color:white;
+
+padding:13px;
 border:none;
-border-radius:10px;
-font-size:16px;
-margin-top:15px;
+border-radius:8px;
 cursor:pointer;
+font-size:15px;
+
 }
 
-button:hover{
-background:#084298;
+.primary{
+
+background:#1565c0;
+color:white;
+
+}
+
+.success{
+
+background:#2e7d32;
+color:white;
+
+}
+
+.danger{
+
+background:#c62828;
+color:white;
+
+}
+
+.totalBox{
+
+background:#e3f2fd;
+padding:20px;
+border-radius:10px;
+margin-top:20px;
+
+}
+
+.totalBox h1{
+
+font-size:36px;
+color:#1565c0;
+
+}
+
+table{
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+th{
+
+background:#1565c0;
+color:white;
+padding:10px;
+
+}
+
+td{
+
+padding:10px;
+border-bottom:1px solid #ddd;
+
+}
+
+footer{
+
+margin-top:30px;
+background:#1565c0;
+color:white;
+padding:25px;
+
 }
 
 .contact{
-text-align:center;
-line-height:1.8;
-}
 
-.sales-table{
-width:100%;
-border-collapse:collapse;
-margin-top:10px;
-}
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
 
-.sales-table th,
-.sales-table td{
-border:1px solid #ddd;
-padding:8px;
-text-align:center;
-}
-
-.sales-table th{
-background:#0d6efd;
-color:white;
-}
-
-@media(max-width:600px){
-h1{
-font-size:22px;
-}
 }
 
 </style>
+
 </head>
 
 <body>
 
+<header>
+
+<div>
+
+<h1>PRINTING SALES CALCULATOR</h1>
+
+<p>Google Sheets Powered POS System</p>
+
+</div>
+
+<div>
+
+<p id="todayDate"></p>
+
+</div>
+
+</header>
+
 <div class="container">
 
-<div class="card">
-
-<h1>🖨 Printing Sales Calculator</h1>
-
-<label>Product</label>
-<select id="product"></select>
-
-<label>Quantity</label>
-<input type="number" id="qty" value="1">
-
-<div class="price-box">
-Price: ₱<span id="price">0</span>
-</div>
-
-<div class="total-box">
-Total: ₱<span id="total">0</span>
-</div>
-
-<button onclick="saveSale()">
-Save Sale
-</button>
-
-</div>
+<div class="cards">
 
 <div class="card">
 
 <h3>Today's Sales</h3>
 
-<table class="sales-table">
-
-<thead>
-<tr>
-<th>Product</th>
-<th>Qty</th>
-<th>Total</th>
-</tr>
-</thead>
-
-<tbody id="salesBody"></tbody>
-
-</table>
-
-<h2 style="margin-top:15px;color:green;">
-Daily Total:
-₱<span id="dailyTotal">0</span>
-</h2>
+<h2 id="todaySales">₱0.00</h2>
 
 </div>
 
-<div class="card contact">
+<div class="card">
 
-<h3>Contact Us</h3>
+<h3>Transactions</h3>
 
-<p>ABC Printing Services</p>
+<h2 id="transactions">0</h2>
 
-<p>📞 Customer Care Hotline</p>
+</div>
 
-<p><b>0917-123-4567</b></p>
+<div class="card">
 
-<p>✉ abcprinting@gmail.com</p>
+<h3>Monthly Sales</h3>
 
-<p>🌐 www.abcprinting.com</p>
+<h2 id="monthlySales">₱0.00</h2>
+
+</div>
+
+<div class="card">
+
+<h3>Best Seller</h3>
+
+<h2 id="bestSeller">-</h2>
 
 </div>
 
 </div>
+
+<div class="main">
+
+<div class="panel">
+
+<h2>Printing Calculator</h2>
+
+<div class="row">
+
+<div>
+
+<label>Customer Name</label>
+
+<input type="text"
+id="customer">
+
+</div>
+
+<div>
+
+<label>Category</label>
+
+<select id="category">
+
+<option>Select Category</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Service</label>
+
+<select id="service">
+
+<option>Select Service</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Quantity</label>
+
+<input
+type="number"
+id="qty"
+value="1">
+
+</div>
+
+<div>
+
+<label>Unit Price</label>
+
+<input
+type="number"
+id="price"
+readonly>
+
+</div>
+
+<div>
+
+<label>Discount (%)</label>
+
+<input
+type="number"
+id="discount"
+value="0">
+
+</div>
+
+<div>
+
+<label>Payment Method</label>
+
+<select id="payment">
+
+<option>Cash</option>
+<option>GCash</option>
+<option>Maya</option>
+<option>Bank Transfer</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>OR Number</label>
+
+<input
+id="orNo"
+readonly>
+
+</div>
+
+</div>
+
+<div class="totalBox">
+
+<h3>Total Amount</h3>
+
+<h1 id="grandTotal">₱0.00</h1>
+
+</div>
+
+<br>
+
+<button class="primary"
+onclick="calculateTotal()">
+
+Calculate
+
+</button>
+
+<button class="success"
+onclick="saveSale()">
+
+Save Sale
+
+</button>
+
+<button class="danger"
+onclick="printReceipt()">
+
+Print Receipt
+
+</button>
+
+</div>
+
+<div class="panel">
+
+<h2>Receipt Preview</h2>
+
+<hr><br>
+
+<div id="receipt">
+
+<p><b>Customer:</b></p>
+
+<p id="rCustomer">-</p>
+
+<br>
+
+<p><b>Service</b></p>
+
+<p id="rService">-</p>
+
+<br>
+
+<p><b>Quantity</b></p>
+
+<p id="rQty">0</p>
+
+<br>
+
+<p><b>Unit Price</b></p>
+
+<p id="rPrice">₱0.00</p>
+
+<br>
+
+<p><b>Total</b></p>
+
+<h2 id="rTotal">₱0.00</h2>
+
+<br>
+
+<p style="text-align:center">
+
+Thank you for your order!
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+  <!-- ================= SALES HISTORY ================= -->
+
+<br><br>
+
+<div class="panel">
+
+    <h2>Daily Sales History</h2>
+
+    <br>
+
+    <div class="row">
+
+        <div>
+            <label>Search Customer</label>
+            <input type="text" id="searchCustomer" placeholder="Search customer...">
+        </div>
+
+        <div>
+            <label>Filter Date</label>
+            <input type="date" id="searchDate">
+        </div>
+
+    </div>
+
+    <br>
+
+    <div style="overflow:auto;">
+
+    <table id="salesTable">
+
+        <thead>
+
+            <tr>
+
+                <th>Date</th>
+                <th>Time</th>
+                <th>OR No.</th>
+                <th>Customer</th>
+                <th>Category</th>
+                <th>Service</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Payment</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="salesBody">
+
+            <tr>
+
+                <td colspan="10" style="text-align:center;padding:30px;">
+                    No sales recorded yet.
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    </div>
+
+</div>
+
+<!-- ================= REPORT ================= -->
+
+<br>
+
+<div class="panel">
+
+<h2>Sales Summary</h2>
+
+<br>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Cash Sales</h3>
+
+<h2 id="cashSales">₱0.00</h2>
+
+</div>
+
+<div class="card">
+
+<h3>GCash Sales</h3>
+
+<h2 id="gcashSales">₱0.00</h2>
+
+</div>
+
+<div class="card">
+
+<h3>Maya Sales</h3>
+
+<h2 id="mayaSales">₱0.00</h2>
+
+</div>
+
+<div class="card">
+
+<h3>Bank Transfer</h3>
+
+<h2 id="bankSales">₱0.00</h2>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= CONTACT ================= -->
+
+<footer>
+
+<h2>Contact Us</h2>
+
+<br>
+
+<div class="contact">
+
+<div>
+
+<h3>Business Name</h3>
+
+<p id="storeName">
+
+Your Printing Shop
+
+</p>
+
+</div>
+
+<div>
+
+<h3>Contact Number</h3>
+
+<p id="contactNumber">
+
+09XXXXXXXXX
+
+</p>
+
+</div>
+
+<div>
+
+<h3>Customer Care Hotline</h3>
+
+<p id="hotline">
+
+09XXXXXXXXX
+
+</p>
+
+</div>
+
+<div>
+
+<h3>Email Address</h3>
+
+<p id="email">
+
+printing@gmail.com
+
+</p>
+
+</div>
+
+<div>
+
+<h3>Facebook Page</h3>
+
+<p>
+
+<a id="facebookLink"
+href="#"
+target="_blank"
+style="color:white;">
+
+Visit our Facebook Page
+
+</a>
+
+</p>
+
+</div>
+
+<div>
+
+<h3>Business Hours</h3>
+
+<p>
+
+Monday - Sunday<br>
+
+8:00 AM - 8:00 PM
+
+</p>
+
+</div>
+
+</div>
+
+<br><br>
+
+<hr>
+
+<br>
+
+<center>
+
+<p>
+
+© 2026 Printing Sales Calculator
+
+<br>
+
+Powered by Google Sheets
+
+</p>
+
+</center>
+
+</footer>
 
 <script>
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwbYyFVCePRhJYsmJa8HmViNb2so8eMmjL4hDipNPgYhidoeHq0TRjeqSdwXuvizdpRsA/exec";
+/* ====================== */
 
-let products = [];
-let dailyTotal = 0;
+document.getElementById("todayDate").innerHTML =
+new Date().toLocaleString();
 
-// Load Products
-window.onload = loadProducts;
+/* ====================== */
 
-function loadProducts(){
+function calculateTotal(){
 
-fetch(SCRIPT_URL)
-.then(response=>{
+let qty=
+Number(document.getElementById("qty").value);
 
-if(!response.ok){
-throw new Error("Cannot connect to Google Apps Script");
-}
+let price=
+Number(document.getElementById("price").value);
 
-return response.json();
+let discount=
+Number(document.getElementById("discount").value);
 
-})
-.then(data=>{
+let total=qty*price;
 
-products=data;
+total=total-(total*(discount/100));
 
-const select=document.getElementById("product");
+document.getElementById("grandTotal").innerHTML=
+"₱"+total.toFixed(2);
 
-select.innerHTML="";
+document.getElementById("rCustomer").innerHTML=
+document.getElementById("customer").value;
 
-products.forEach((item,index)=>{
+document.getElementById("rService").innerHTML=
+document.getElementById("service").value;
 
-let option=document.createElement("option");
+document.getElementById("rQty").innerHTML=qty;
 
-option.value=index;
-option.text=item.name;
+document.getElementById("rPrice").innerHTML=
+"₱"+price.toFixed(2);
 
-select.appendChild(option);
-
-});
-
-updatePrice();
-
-})
-.catch(error=>{
-
-console.error(error);
-
-alert("Unable to load products.\n\n"+error);
-
-});
+document.getElementById("rTotal").innerHTML=
+"₱"+total.toFixed(2);
 
 }
 
-// Calculate
+/* ====================== */
 
-document.getElementById("product").addEventListener("change",updatePrice);
-document.getElementById("qty").addEventListener("input",updatePrice);
+function printReceipt(){
 
-function updatePrice(){
-
-if(products.length==0)return;
-
-const product=products[
-document.getElementById("product").value
-];
-
-const qty=parseFloat(document.getElementById("qty").value)||0;
-
-const total=qty*Number(product.price);
-
-document.getElementById("price").innerHTML=Number(product.price).toFixed(2);
-
-document.getElementById("total").innerHTML=total.toFixed(2);
+window.print();
 
 }
 
-// Save Sale
+/* ====================== */
 
 function saveSale(){
 
-if(products.length==0){
-
-alert("Products not loaded.");
-
-return;
+alert("Google Sheets integration will be connected in Part 2.");
 
 }
 
-const product=products[
-document.getElementById("product").value
-];
+/* ====================== */
 
-const qty=parseFloat(document.getElementById("qty").value)||0;
-
-if(qty<=0){
-
-alert("Enter valid quantity.");
-
-return;
-
-}
-
-const total=qty*Number(product.price);
-
-const formData=new URLSearchParams();
-
-formData.append("product",product.name);
-formData.append("qty",qty);
-formData.append("price",product.price);
-formData.append("total",total);
-
-fetch(SCRIPT_URL,{
-method:"POST",
-body:formData
-})
-.then(response=>response.json())
-.then(res=>{
-
-if(res.success){
-
-let row=`
-<tr>
-<td>${product.name}</td>
-<td>${qty}</td>
-<td>₱${total.toFixed(2)}</td>
-</tr>
-`;
-
-document.getElementById("salesBody").insertAdjacentHTML("beforeend",row);
-
-dailyTotal+=total;
-
-document.getElementById("dailyTotal").innerHTML=dailyTotal.toFixed(2);
-
-document.getElementById("qty").value=1;
-
-updatePrice();
-
-alert("Sale saved successfully.");
-
-}else{
-
-alert("Failed to save sale.");
-
-}
-
-})
-.catch(error=>{
-
-console.error(error);
-
-alert("Error saving sale.\n\n"+error);
-
-});
-
-}
+document.getElementById("orNo").value=
+"OR-"+Date.now();
 
 </script>
 
 </body>
+
 </html>
