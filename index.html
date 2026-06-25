@@ -1233,6 +1233,217 @@ setInterval(updateClock,1000);
 
 updateClock();
 
+      /*==================================================
+        PAYMENT SUMMARY
+==================================================*/
+
+async function loadPaymentSummary(){
+
+    try{
+
+        const response = await fetch(
+            WEBAPP_URL + "?action=getPaymentSummary"
+        );
+
+        const summary = await response.json();
+
+        updatePaymentSummary(summary);
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+/*==================================================
+UPDATE PAYMENT CARDS
+==================================================*/
+
+function updatePaymentSummary(summary){
+
+    document.getElementById("cashSales").innerHTML =
+        "₱" + Number(summary.cash || 0).toFixed(2);
+
+    document.getElementById("gcashSales").innerHTML =
+        "₱" + Number(summary.gcash || 0).toFixed(2);
+
+    document.getElementById("mayaSales").innerHTML =
+        "₱" + Number(summary.maya || 0).toFixed(2);
+
+    document.getElementById("bankSales").innerHTML =
+        "₱" + Number(summary.bank || 0).toFixed(2);
+
+}
+
+/*==================================================
+LOAD REPORTS
+==================================================*/
+
+async function loadReports(){
+
+    await Promise.all([
+
+        loadDashboard(),
+
+        loadPaymentSummary(),
+
+        loadSales()
+
+    ]);
+
+}
+
+/*==================================================
+REFRESH ENTIRE SYSTEM
+==================================================*/
+
+function refreshAll(){
+
+    loadReports();
+
+}
+
+/*==================================================
+AUTO LOAD
+==================================================*/
+
+window.addEventListener("load",()=>{
+
+    loadReports();
+
+});
+
+/*==================================================
+EXPORT SALES TO CSV
+==================================================*/
+
+function exportCSV(){
+
+    const table=document.getElementById("salesTable");
+
+    let csv=[];
+
+    for(let i=0;i<table.rows.length;i++){
+
+        let row=[];
+
+        for(let j=0;j<table.rows[i].cells.length;j++){
+
+            row.push(
+                '"' +
+                table.rows[i].cells[j].innerText +
+                '"'
+            );
+
+        }
+
+        csv.push(row.join(","));
+
+    }
+
+    const csvFile=new Blob(
+        [csv.join("\n")],
+        {type:"text/csv"}
+    );
+
+    const download=document.createElement("a");
+
+    download.download="Sales_Report.csv";
+
+    download.href=window.URL.createObjectURL(csvFile);
+
+    download.click();
+
+}
+
+/*==================================================
+PRINT SALES REPORT
+==================================================*/
+
+function printSales(){
+
+    const content=document.querySelector(".panel").innerHTML;
+
+    const win=window.open("","","width=900,height=700");
+
+    win.document.write("<html><head><title>Sales Report</title>");
+
+    win.document.write("</head><body>");
+
+    win.document.write(content);
+
+    win.document.write("</body></html>");
+
+    win.document.close();
+
+    win.print();
+
+}
+
+/*==================================================
+RESET REPORT
+==================================================*/
+
+function clearSearch(){
+
+    document.getElementById("searchCustomer").value="";
+
+    document.getElementById("searchDate").value="";
+
+    filterSales();
+
+}
+
+/*==================================================
+TOTAL SALES
+==================================================*/
+
+function computeGrandTotal(){
+
+    let total=0;
+
+    const rows=document.querySelectorAll("#salesBody tr");
+
+    rows.forEach(row=>{
+
+        const cells=row.getElementsByTagName("td");
+
+        if(cells.length>8){
+
+            const amount=parseFloat(
+
+                cells[8]
+                .innerText
+                .replace("₱","")
+                .replace(",","")
+
+            );
+
+            if(!isNaN(amount))
+                total+=amount;
+
+        }
+
+    });
+
+    console.log("Grand Total :",total);
+
+}
+
+/*==================================================
+AUTO REFRESH EVERY 60 SECONDS
+==================================================*/
+
+setInterval(()=>{
+
+    refreshAll();
+
+},60000);
+
 <script src="script.js"></script>
 </body>
 </html>
