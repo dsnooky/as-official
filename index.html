@@ -133,5 +133,251 @@ padding:20px;
 © 2026 AS Printing Services
 </footer>
 
+  function doGet(e) {
+  const action = (e.parameter.action || '').trim();
+
+  try {
+    if (action === 'getPriceList') {
+      return jsonOutput({ success: true, data: getPriceList() });
+    }
+
+    if (action === 'getSettings') {
+      return jsonOutput({ success: true, data: getSettings() });
+    }
+
+    if (action === 'getDashboardData') {
+      return jsonOutput({ success: true, data: getDashboardData() });
+    }
+
+    return jsonOutput({
+      success: false,
+      message: 'Invalid action.'
+    });
+
+  } catch (error) {
+    return jsonOutput({
+      success: false,
+      message: error.message
+    });
+  }
+}
+
+function doPost(e) {
+  try {
+    const payload = JSON.parse(e.postData.contents || '{}');
+    const action = (payload.action || '').trim();
+
+    if (action === 'saveSale') {
+      const result = saveSale(payload.sale || {});
+      return jsonOutput(result);
+    }
+
+    return jsonOutput({
+      success: false,
+      message: 'Invalid POST action.'
+    });
+
+  } catch (error) {
+    return jsonOutput({
+      success: false,
+      message: error.message
+    });
+  }
+}
+
+function jsonOutput(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getSheet(name) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
+  if (!sheet) {
+    throw new Error(`Sheet "${name}" not found.`);
+  }
+  return sheet;
+}
+
+function getPriceList() {
+  const sheet = getSheet('PRICE_LIST');
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return [];
+
+  data.shift(); // remove headers
+
+  return data
+    .filter(row => row[0] && row[1])
+    .map(row => ({
+      category: String(row[0]).trim(),
+      service: String(row[1]).trim(),
+      unit: row[2] ? String(row[2]).trim() : '',
+      price: Number(row[3]) || 0
+    }));
+}
+
+function getSettings() {
+  const sheet = getSheet('SETTINGS');
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return {};
+
+  data.shift(); // remove headers
+
+  const settings = {};
+  data.forEach(row => {
+    if (row[0]) {
+      settings[String(row[0]).trim()] = row[1];
+    }
+  });
+
+  return settings;
+}
+
+function saveSale(sale) {
+  const sheet = getSheet('SALES_RECORD');
+  const now = new Date();
+  const tz = Session.getScriptTimeZone();
+
+  const date = Utilities.formatDate(now, tz, 'yyyy-MM-dd');
+  const time = Utilities.formatDate(now, tz, 'hh:mm:ss a');
+
+  const category = sale.category ? String(sale.category).trim() : '';
+  const service = sale.service ? String(sale.service).trim() : '';
+  const qty = Number(sale.qty) || 0;
+  const unitPrice = Number(sale.unitPrice) || 0;
+  const total = Number(sale.total) || (qty * unitPrice);
+  const paymentMethod = sale.paymentMethod ? String(sale.paymentMethod).trim() : '';
+  const notes = sale.notes ? String(sale.notes).trim() : '';
+
+  if (!category || !service) {
+    throw new Error('Category and service are required.');
+  }
+
+  if (qty <= 0) {
+    throw new Error('Quantity must be greater than 0.');
+  }
+
+  if (!paymentMethod) {
+    throw new Error('Payment method is required.');
+  }
+
+  sheet.appendRow([
+    date,
+    time,
+    category,
+    service,
+    qty,
+    unitPrice,
+    total,
+    paymentMethod,
+    notes
+  ]);
+
+  SpreadsheetApp.flush();
+
+  return {
+    success: true,
+    message: 'Sale saved successfully!'
+  };
+}
+
+function getDashboardData() {
+  const sheet = getSheet('SALES_RECORD');
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return {
+      todaySales: 0,
+      monthlySales: 0,
+      totalTransactions: 0,
+      topService: '-',
+      recentSales: []
+    };
+  }
+
+  const rows = data.slice(1);
+  const now = new Date();
+  const tz = Session.getScriptTimeZone();
+  const today = Utilities.formatDate(now, tz, 'yyyy-MM-dd');
+  const currentMonth = Utilities.formatDate(now, tz, 'yyyy-MM');
+
+  let todaySales = 0;
+  let monthlySales = 0;
+  let totalTransactions = 0;
+  const serviceCount = {};
+  const recentSales = [];
+
+  rows.forEach(row => {
+    if (!row[0]) return;
+
+    let rawDate = row[0];
+    let formattedDate = '';
+
+    if (Object.prototype.toString.call(rawDate) === '[object Date]' && !isNaN(rawDate)) {
+      formattedDate = Utilities.formatDate(rawDate, tz, 'yyyy-MM-dd');
+    } else {
+      formattedDate = String(rawDate).trim();
+    }
+
+    const time = row[1] ? String(row[1]).trim() : '';
+    const category = row[2] ? String(row[2]).trim() : '';
+    const service = row[3] ? String(row[3]).trim() : '';
+    const qty = Number(row[4]) || 0;
+    const unitPrice = Number(row[5]) || 0;
+    const total = Number(row[6]) || 0;
+    const paymentMethod = row[7] ? String(row[7]).trim() : '';
+    const notes = row[8] ? String(row[8]).trim() : '';
+
+    totalTransactions++;
+
+    if (formattedDate === today) {
+      todaySales += total;
+    }
+
+    if (formattedDate.substring(0, 7) === currentMonth) {
+      monthlySales += total;
+    }
+
+    if (service) {
+      serviceCount[service] = (serviceCount[service] || 0) + 1;
+    }
+
+    recentSales.push({
+      date: formattedDate,
+      time,
+      category,
+      service,
+      qty,
+      unitPrice,
+      total,
+      paymentMethod,
+      notes
+    });
+  });
+
+  recentSales.reverse();
+  const last10 = recentSales.slice(0, 10);
+
+  let topService = '-';
+  let maxCount = 0;
+
+  for (const service in serviceCount) {
+    if (serviceCount[service] > maxCount) {
+      maxCount = serviceCount[service];
+      topService = service;
+    }
+  }
+
+  return {
+    todaySales,
+    monthlySales,
+    totalTransactions,
+    topService,
+    recentSales: last10
+  };
+}
+
 </body>
 </html>
