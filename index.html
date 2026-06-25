@@ -1,383 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AS Printing Services</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AS PRINTING POS</title>
 <style>
-body{
-margin:0;
-font-family:Segoe UI,sans-serif;
-background:#0f172a;
-color:white;
-}
-
-.hero{
-min-height:70vh;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-background:linear-gradient(135deg,#2563eb,#06b6d4);
-padding:20px;
-}
-
-.hero h1{
-font-size:3rem;
-}
-
-.btn{
-display:inline-block;
-background:white;
-color:#2563eb;
-padding:14px 24px;
-border-radius:10px;
-text-decoration:none;
-font-weight:bold;
-}
-
-.section{
-padding:50px 8%;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:20px;
-}
-
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:15px;
-}
-
-.card h3{
-color:#67e8f9;
-}
-
-footer{
-text-align:center;
-padding:20px;
-}
+body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0}
+header{background:#0d6efd;color:#fff;padding:15px;text-align:center}
+.container{max-width:1100px;margin:auto;padding:20px}
+.card{background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1);margin-bottom:15px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+input,select,button{width:100%;padding:10px;margin:5px 0}
+button{background:#0d6efd;color:white;border:none;cursor:pointer}
+.total{font-size:28px;font-weight:bold;color:green}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #ddd;padding:8px}
+@media(max-width:768px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<header><h2>AS PRINTING SALES CALCULATOR & POS</h2></header>
 
-<section class="hero">
-<div>
-<h1>🖨️ AS PRINTING SERVICES</h1>
-<p>Fast • Affordable • Quality Printing</p>
-
-<a href="calculator.html" class="btn">
-🧮 Open Calculator
-</a>
-</div>
-</section>
-
-<section class="section">
-
-<h2>Our Services</h2>
-
+<div class="container">
 <div class="grid">
 
 <div class="card">
-<h3>📄 Xerox</h3>
-<p>B&W Short - ₱4</p>
-<p>B&W Long - ₱5</p>
-<p>Birth/Marriage/Death Certificate - ₱10</p>
-<P>VALID I.D (B&W) - ₱5</p>
-<P>VALID I.D (COLORED) - ₱8</p>
-<p>Colored Short - ₱6</p>
-<p>Colored Long - ₱7</p>
+<h3>Sales Entry</h3>
+<input id="customer" placeholder="Customer Name">
+<select id="category"></select>
+<select id="service"></select>
+<input id="qty" type="number" value="1">
+<input id="price" readonly>
+<div class="total">₱ <span id="total">0.00</span></div>
+<button onclick="saveSale()">Record Sale</button>
 </div>
 
 <div class="card">
-<h3>🖨️ Printing</h3>
-<p>A4/SHORT - ₱5</p>
-<p>LONG- ₱6</p>
-<p>VALID ID - ₱10</p>
-<p>BIRTH/MARRIAGE/DEATH CERTIFICATE- ₱10</p>
-<p>IMAGE w/text (A4/SHORT) - ₱10</p>
-<p>IMAGE w/text (LONG) - ₱15</p>
-<p>FULL IMAGE (A4/SHORT) - ₱15</p>
-<p>FULL IMAGE (LONG) - ₱20</p>
+<h3>Contact Us</h3>
+<p><b>Store:</b> AS PRINTING</p>
+<p><b>Customer Care Hotline:</b> 09620926818</p>
+<p><b>Facebook:</b> https://www.facebook.com/ddsnooky</p>
+</div>
+
 </div>
 
 <div class="card">
-<h3>🏷️ Stickers</h3>
-<p>A4 Sticker - ₱50</p>
+<h3>Today's Sales</h3>
+<table>
+<thead><tr><th>Date</th><th>Customer</th><th>Service</th><th>Total</th></tr></thead>
+<tbody id="salesTable"></tbody>
+</table>
+</div>
 </div>
 
-<div class="card">
-<h3>🪪 Photo ID</h3>
-<p>Starts at ₱35</p>
-</div>
+<script>
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxl0GKuSS-ij1w1PGL6dbdjXkkFaV4s4Vqa1FBvn5TDjgzqfh5Qwgxgcg9i4Pxsdm8BuA/exec";
+let priceData=[];
 
-<div class="card">
-<h3>📑 Resume</h3>
-<p>₱100</p>
-</div>
+async function loadPrices(){
+ const r=await fetch(SCRIPT_URL+"?action=prices");
+ priceData=await r.json();
 
-<div class="card">
-<h3>📋 Appointment</h3>
-<p>Police Clearance - ₱230</p>
-</div>
-
-</div>
-
-</section>
-
-<footer>
-© 2026 AS Printing Services
-</footer>
-
-  function doGet(e) {
-  const action = (e.parameter.action || '').trim();
-
-  try {
-    if (action === 'getPriceList') {
-      return jsonOutput({ success: true, data: getPriceList() });
-    }
-
-    if (action === 'getSettings') {
-      return jsonOutput({ success: true, data: getSettings() });
-    }
-
-    if (action === 'getDashboardData') {
-      return jsonOutput({ success: true, data: getDashboardData() });
-    }
-
-    return jsonOutput({
-      success: false,
-      message: 'Invalid action.'
-    });
-
-  } catch (error) {
-    return jsonOutput({
-      success: false,
-      message: error.message
-    });
-  }
+ let categories=[...new Set(priceData.map(x=>x.Category))];
+ let cat=document.getElementById("category");
+ cat.innerHTML=categories.map(c=>`<option>${c}</option>`).join("");
+ loadServices();
 }
 
-function doPost(e) {
-  try {
-    const payload = JSON.parse(e.postData.contents || '{}');
-    const action = (payload.action || '').trim();
+function loadServices(){
+ let cat=document.getElementById("category").value;
+ let services=priceData.filter(x=>x.Category===cat);
 
-    if (action === 'saveSale') {
-      const result = saveSale(payload.sale || {});
-      return jsonOutput(result);
-    }
-
-    return jsonOutput({
-      success: false,
-      message: 'Invalid POST action.'
-    });
-
-  } catch (error) {
-    return jsonOutput({
-      success: false,
-      message: error.message
-    });
-  }
+ let s=document.getElementById("service");
+ s.innerHTML=services.map(x=>`<option>${x.Service}</option>`).join("");
+ calculate();
 }
 
-function jsonOutput(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
+function calculate(){
+ let srv=document.getElementById("service").value;
+ let item=priceData.find(x=>x.Service===srv);
+ if(!item)return;
+
+ document.getElementById("price").value=item.Price;
+
+ let qty=parseFloat(document.getElementById("qty").value||0);
+ let total=qty*parseFloat(item.Price);
+
+ document.getElementById("total").innerText=total.toFixed(2);
 }
 
-function getSheet(name) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
-  if (!sheet) {
-    throw new Error(`Sheet "${name}" not found.`);
-  }
-  return sheet;
+async function saveSale(){
+ let payload={
+ customer:document.getElementById("customer").value,
+ category:document.getElementById("category").value,
+ service:document.getElementById("service").value,
+ qty:document.getElementById("qty").value,
+ unitPrice:document.getElementById("price").value,
+ total:document.getElementById("total").innerText
+ };
+
+ await fetch(SCRIPT_URL,{
+ method:"POST",
+ body:JSON.stringify(payload)
+ });
+
+ alert("Sale Recorded!");
 }
 
-function getPriceList() {
-  const sheet = getSheet('PRICE_LIST');
-  const data = sheet.getDataRange().getValues();
+document.addEventListener("change",e=>{
+ if(["category","service","qty"].includes(e.target.id)){
+   if(e.target.id==="category") loadServices();
+   calculate();
+ }
+});
 
-  if (data.length <= 1) return [];
-
-  data.shift(); // remove headers
-
-  return data
-    .filter(row => row[0] && row[1])
-    .map(row => ({
-      category: String(row[0]).trim(),
-      service: String(row[1]).trim(),
-      unit: row[2] ? String(row[2]).trim() : '',
-      price: Number(row[3]) || 0
-    }));
-}
-
-function getSettings() {
-  const sheet = getSheet('SETTINGS');
-  const data = sheet.getDataRange().getValues();
-
-  if (data.length <= 1) return {};
-
-  data.shift(); // remove headers
-
-  const settings = {};
-  data.forEach(row => {
-    if (row[0]) {
-      settings[String(row[0]).trim()] = row[1];
-    }
-  });
-
-  return settings;
-}
-
-function saveSale(sale) {
-  const sheet = getSheet('SALES_RECORD');
-  const now = new Date();
-  const tz = Session.getScriptTimeZone();
-
-  const date = Utilities.formatDate(now, tz, 'yyyy-MM-dd');
-  const time = Utilities.formatDate(now, tz, 'hh:mm:ss a');
-
-  const category = sale.category ? String(sale.category).trim() : '';
-  const service = sale.service ? String(sale.service).trim() : '';
-  const qty = Number(sale.qty) || 0;
-  const unitPrice = Number(sale.unitPrice) || 0;
-  const total = Number(sale.total) || (qty * unitPrice);
-  const paymentMethod = sale.paymentMethod ? String(sale.paymentMethod).trim() : '';
-  const notes = sale.notes ? String(sale.notes).trim() : '';
-
-  if (!category || !service) {
-    throw new Error('Category and service are required.');
-  }
-
-  if (qty <= 0) {
-    throw new Error('Quantity must be greater than 0.');
-  }
-
-  if (!paymentMethod) {
-    throw new Error('Payment method is required.');
-  }
-
-  sheet.appendRow([
-    date,
-    time,
-    category,
-    service,
-    qty,
-    unitPrice,
-    total,
-    paymentMethod,
-    notes
-  ]);
-
-  SpreadsheetApp.flush();
-
-  return {
-    success: true,
-    message: 'Sale saved successfully!'
-  };
-}
-
-function getDashboardData() {
-  const sheet = getSheet('SALES_RECORD');
-  const data = sheet.getDataRange().getValues();
-
-  if (data.length <= 1) {
-    return {
-      todaySales: 0,
-      monthlySales: 0,
-      totalTransactions: 0,
-      topService: '-',
-      recentSales: []
-    };
-  }
-
-  const rows = data.slice(1);
-  const now = new Date();
-  const tz = Session.getScriptTimeZone();
-  const today = Utilities.formatDate(now, tz, 'yyyy-MM-dd');
-  const currentMonth = Utilities.formatDate(now, tz, 'yyyy-MM');
-
-  let todaySales = 0;
-  let monthlySales = 0;
-  let totalTransactions = 0;
-  const serviceCount = {};
-  const recentSales = [];
-
-  rows.forEach(row => {
-    if (!row[0]) return;
-
-    let rawDate = row[0];
-    let formattedDate = '';
-
-    if (Object.prototype.toString.call(rawDate) === '[object Date]' && !isNaN(rawDate)) {
-      formattedDate = Utilities.formatDate(rawDate, tz, 'yyyy-MM-dd');
-    } else {
-      formattedDate = String(rawDate).trim();
-    }
-
-    const time = row[1] ? String(row[1]).trim() : '';
-    const category = row[2] ? String(row[2]).trim() : '';
-    const service = row[3] ? String(row[3]).trim() : '';
-    const qty = Number(row[4]) || 0;
-    const unitPrice = Number(row[5]) || 0;
-    const total = Number(row[6]) || 0;
-    const paymentMethod = row[7] ? String(row[7]).trim() : '';
-    const notes = row[8] ? String(row[8]).trim() : '';
-
-    totalTransactions++;
-
-    if (formattedDate === today) {
-      todaySales += total;
-    }
-
-    if (formattedDate.substring(0, 7) === currentMonth) {
-      monthlySales += total;
-    }
-
-    if (service) {
-      serviceCount[service] = (serviceCount[service] || 0) + 1;
-    }
-
-    recentSales.push({
-      date: formattedDate,
-      time,
-      category,
-      service,
-      qty,
-      unitPrice,
-      total,
-      paymentMethod,
-      notes
-    });
-  });
-
-  recentSales.reverse();
-  const last10 = recentSales.slice(0, 10);
-
-  let topService = '-';
-  let maxCount = 0;
-
-  for (const service in serviceCount) {
-    if (serviceCount[service] > maxCount) {
-      maxCount = serviceCount[service];
-      topService = service;
-    }
-  }
-
-  return {
-    todaySales,
-    monthlySales,
-    totalTransactions,
-    topService,
-    recentSales: last10
-  };
-}
-
+loadPrices();
+</script>
 </body>
 </html>
