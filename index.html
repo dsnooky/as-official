@@ -644,6 +644,37 @@ window.print();
 
 }
 
+  ```javascript
+async function loadSettings(){
+
+    try{
+
+        const res = await fetch(
+            WEBAPP_URL + "?action=getSettings"
+        );
+
+        const settings = await res.json();
+
+        // Change browser tab title
+        document.title =
+        settings["Store Name"] || "POS System";
+
+        // Optional if you add elements later:
+        // document.getElementById("storeName").innerHTML =
+        // settings["Store Name"];
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+<h1 id="storeName">Loading...</h1>
+
+
 </script>
 
 </body>
