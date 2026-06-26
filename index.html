@@ -547,20 +547,26 @@ body:JSON.stringify(payload)
 
 const result=
 await res.json();
-
 if(result.status=="success"){
 
 alert("Sale saved.");
+
+document.getElementById("customer").value="";
+document.getElementById("qty").value=1;
+document.getElementById("discount").value=0;
+document.getElementById("price").value="";
+document.getElementById("grandTotal").innerHTML="₱0.00";
+
+generateOR();
 
 loadDashboard();
 
 loadSales();
 
-generateOR();
-
 }
 
-}
+
+
 
 /* ======================== */
 
