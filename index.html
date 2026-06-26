@@ -1,16 +1,14 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS Printing POS</title>
 
-<title>Printing Sales Calculator</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -19,585 +17,312 @@ font-family:'Poppins',sans-serif;
 }
 
 body{
-background:#f3f5f9;
+background:#f4f6fa;
+padding:20px;
 color:#333;
 }
 
-header{
-
-background:#1565c0;
-color:white;
-padding:18px;
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-flex-wrap:wrap;
-
-}
-
-header h1{
-
-font-size:26px;
-
-}
-
-header p{
-
-font-size:14px;
-
-}
-
 .container{
-
-width:95%;
-max-width:1400px;
+max-width:1300px;
 margin:auto;
-padding:20px;
+}
 
+h1{
+margin-bottom:20px;
 }
 
 .cards{
-
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
-margin-bottom:25px;
-
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+margin-bottom:20px;
 }
 
 .card{
-
 background:white;
-border-radius:12px;
 padding:20px;
-box-shadow:0 3px 8px rgba(0,0,0,.12);
-
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
 .card h3{
-
-font-size:16px;
-margin-bottom:8px;
-
+font-size:14px;
+margin-bottom:10px;
 }
 
 .card h2{
-
-font-size:30px;
 color:#1565c0;
-
 }
 
 .main{
-
 display:grid;
 grid-template-columns:2fr 1fr;
 gap:20px;
-
 }
 
 @media(max-width:900px){
-
 .main{
-
 grid-template-columns:1fr;
-
 }
-
 }
 
 .panel{
-
 background:white;
 padding:20px;
 border-radius:12px;
-box-shadow:0 3px 8px rgba(0,0,0,.12);
-
-}
-
-.panel h2{
-
-margin-bottom:15px;
-
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+margin-bottom:20px;
 }
 
 .row{
-
 display:grid;
 grid-template-columns:repeat(2,1fr);
 gap:15px;
-
 }
 
 @media(max-width:700px){
-
 .row{
-
 grid-template-columns:1fr;
-
 }
-
 }
 
 label{
-
 display:block;
-margin-bottom:6px;
+margin-bottom:5px;
 font-size:14px;
-
 }
 
 input,select{
-
 width:100%;
 padding:12px;
-border:1px solid #ccc;
+border:1px solid #ddd;
 border-radius:8px;
-font-size:15px;
-
 }
 
 button{
-
-padding:13px;
+padding:12px;
 border:none;
-border-radius:8px;
 cursor:pointer;
-font-size:15px;
-
+border-radius:8px;
+margin-top:15px;
+margin-right:5px;
 }
 
 .primary{
-
 background:#1565c0;
 color:white;
-
 }
 
 .success{
-
 background:#2e7d32;
 color:white;
-
 }
 
 .danger{
-
 background:#c62828;
 color:white;
-
 }
 
-.totalBox{
-
+.total{
 background:#e3f2fd;
 padding:20px;
-border-radius:10px;
 margin-top:20px;
-
+border-radius:10px;
 }
 
-.totalBox h1{
-
-font-size:36px;
+.total h1{
 color:#1565c0;
-
 }
 
 table{
-
 width:100%;
 border-collapse:collapse;
-
 }
 
 th{
-
 background:#1565c0;
 color:white;
 padding:10px;
-
 }
 
 td{
-
 padding:10px;
-border-bottom:1px solid #ddd;
-
+border-bottom:1px solid #eee;
+font-size:14px;
 }
 
-footer{
-
-margin-top:30px;
-background:#1565c0;
-color:white;
-padding:25px;
-
+.receipt p{
+margin-bottom:10px;
 }
-
-.contact{
-
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-
-}
-
 </style>
-
 </head>
 
 <body>
 
-<header>
-
-<div>
-
-<h1>PRINTING SALES CALCULATOR</h1>
-
-<p>Google Sheets Powered POS System</p>
-
-</div>
-
-<div>
-
-<p id="todayDate"></p>
-
-</div>
-
-</header>
-
 <div class="container">
+
+<h1>AS PRINTING POS SYSTEM</h1>
 
 <div class="cards">
 
 <div class="card">
-
 <h3>Today's Sales</h3>
-
 <h2 id="todaySales">₱0.00</h2>
-
 </div>
 
 <div class="card">
-
 <h3>Transactions</h3>
-
 <h2 id="transactions">0</h2>
-
 </div>
 
 <div class="card">
-
 <h3>Monthly Sales</h3>
-
 <h2 id="monthlySales">₱0.00</h2>
-
 </div>
 
 <div class="card">
-
 <h3>Best Seller</h3>
-
 <h2 id="bestSeller">-</h2>
-
 </div>
 
 </div>
 
 <div class="main">
 
+<!-- LEFT -->
+
 <div class="panel">
 
-<h2>Printing Calculator</h2>
+<h2>Calculator</h2><br>
 
 <div class="row">
 
 <div>
-
-<label>Customer Name</label>
-
-<input type="text"
-id="customer">
-
+<label>Customer</label>
+<input id="customer">
 </div>
 
 <div>
-
 <label>Category</label>
-
-<select id="category">
-
-<option>Select Category</option>
-
-</select>
-
+<select id="category"></select>
 </div>
 
 <div>
-
 <label>Service</label>
-
-<select id="service">
-
-<option>Select Service</option>
-
-</select>
-
+<select id="service"></select>
 </div>
 
 <div>
-
 <label>Quantity</label>
-
-<input
-type="number"
-id="qty"
-value="1">
-
+<input id="qty" type="number" value="1">
 </div>
 
 <div>
-
 <label>Unit Price</label>
-
-<input
-type="number"
-id="price"
-readonly>
-
+<input id="price" readonly>
 </div>
 
 <div>
-
 <label>Discount (%)</label>
-
-<input
-type="number"
-id="discount"
-value="0">
-
+<input id="discount" type="number" value="0">
 </div>
 
 <div>
-
-<label>Payment Method</label>
-
+<label>Payment</label>
 <select id="payment">
-
 <option>Cash</option>
 <option>GCash</option>
 <option>Maya</option>
 <option>Bank Transfer</option>
-
 </select>
-
 </div>
 
 <div>
-
 <label>OR Number</label>
-
-<input
-id="orNo"
-readonly>
-
+<input id="orNo" readonly>
 </div>
 
 </div>
 
-<div class="totalBox">
-
-<h3>Total Amount</h3>
-
+<div class="total">
+<h3>Total</h3>
 <h1 id="grandTotal">₱0.00</h1>
+</div>
+
+<button class="primary" onclick="calculateTotal()">Calculate</button>
+<button class="success" onclick="saveSale()">Save Sale</button>
+<button class="danger" onclick="printReceipt()">Print</button>
 
 </div>
 
-<br>
-
-<button class="primary"
-onclick="calculateTotal()">
-
-Calculate
-
-</button>
-
-<button class="success"
-onclick="saveSale()">
-
-Save Sale
-
-</button>
-
-<button class="danger"
-onclick="printReceipt()">
-
-Print Receipt
-
-</button>
-
-</div>
+<!-- RIGHT -->
 
 <div class="panel">
 
 <h2>Receipt Preview</h2>
-
-<hr><br>
-
-<div id="receipt">
-
-<p><b>Customer:</b></p>
-
-<p id="rCustomer">-</p>
-
 <br>
 
-<p><b>Service</b></p>
+<div class="receipt">
 
-<p id="rService">-</p>
+<p><b>Customer:</b> <span id="rCustomer">-</span></p>
 
-<br>
+<p><b>Service:</b> <span id="rService">-</span></p>
 
-<p><b>Quantity</b></p>
+<p><b>Qty:</b> <span id="rQty">0</span></p>
 
-<p id="rQty">0</p>
+<p><b>Price:</b> <span id="rPrice">₱0.00</span></p>
 
-<br>
-
-<p><b>Unit Price</b></p>
-
-<p id="rPrice">₱0.00</p>
-
-<br>
-
-<p><b>Total</b></p>
+<p><b>Total:</b></p>
 
 <h2 id="rTotal">₱0.00</h2>
 
-<br>
-
-<p style="text-align:center">
-
-Thank you for your order!
-
-</p>
-
 </div>
 
 </div>
 
 </div>
 
-  <!-- ================= SALES HISTORY ================= -->
-
-<br><br>
+<!-- SALES HISTORY -->
 
 <div class="panel">
 
-    <h2>Daily Sales History</h2>
-
-    <br>
-
-    <div class="row">
-
-        <div>
-            <label>Search Customer</label>
-            <input type="text" id="searchCustomer" placeholder="Search customer...">
-        </div>
-
-        <div>
-            <label>Filter Date</label>
-            <input type="date" id="searchDate">
-        </div>
-
-    </div>
-
-    <br>
-
-    <div style="overflow:auto;">
-
-    <table id="salesTable">
-
-        <thead>
-
-            <tr>
-
-                <th>Date</th>
-                <th>Time</th>
-                <th>OR No.</th>
-                <th>Customer</th>
-                <th>Category</th>
-                <th>Service</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Payment</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody id="salesBody">
-
-            <tr>
-
-                <td colspan="10" style="text-align:center;padding:30px;">
-                    No sales recorded yet.
-                </td>
-
-            </tr>
-
-        </tbody>
-
-    </table>
-
-    </div>
-
-</div>
-
-<!-- ================= REPORT ================= -->
-
+<h2>Sales History</h2>
 <br>
 
-<div class="panel">
+<div style="overflow:auto">
 
-<h2>Sales Summary</h2>
+<table>
 
-<br>
+<thead>
 
-<div class="cards">
+<tr>
 
-<div class="card">
+<th>Date</th>
+<th>Time</th>
+<th>OR</th>
+<th>Customer</th>
+<th>Service</th>
+<th>Qty</th>
+<th>Total</th>
+<th>Payment</th>
 
-<h3>Cash Sales</h3>
+</tr>
 
-<h2 id="cashSales">₱0.00</h2>
+</thead>
 
-</div>
+<tbody id="salesBody">
 
-<div class="card">
+<tr>
 
-<h3>GCash Sales</h3>
+<td colspan="8" style="text-align:center">
+No sales yet
+</td>
 
-<h2 id="gcashSales">₱0.00</h2>
+</tr>
 
-</div>
+</tbody>
 
-<div class="card">
-
-<h3>Maya Sales</h3>
-
-<h2 id="mayaSales">₱0.00</h2>
-
-</div>
-
-<div class="card">
-
-<h3>Bank Transfer</h3>
-
-<h2 id="bankSales">₱0.00</h2>
+</table>
 
 </div>
 
@@ -605,129 +330,132 @@ Thank you for your order!
 
 </div>
 
-<!-- ================= CONTACT ================= -->
+<script>
 
-<footer>
+const WEBAPP_URL =
+"https://script.google.com/macros/s/AKfycbxJ7hhVPsk6YoKm85fNI55ecbnTBMIFtO7ZSHX-BViwYzmM814EEt165xunK6v21DNaxQ/exec";
 
-<h2>Contact Us</h2>
+let priceList=[];
 
-<br>
+/* ======================== */
 
-<div class="contact">
+window.onload=()=>{
 
-<div>
+generateOR();
 
-<h3>Business Name</h3>
+loadPrices();
 
-<p id="storeName">
+loadDashboard();
 
-Your Printing Shop
+loadSales();
 
-</p>
+}
 
-</div>
+/* ======================== */
 
-<div>
+function generateOR(){
 
-<h3>Contact Number</h3>
+document.getElementById("orNo").value=
+"OR-"+Date.now();
 
-<p id="contactNumber">
+}
 
-09XXXXXXXXX
+/* ======================== */
 
-</p>
+async function loadPrices(){
 
-</div>
+const res=
+await fetch(
+WEBAPP_URL+"?action=getPrices"
+);
 
-<div>
+priceList=
+await res.json();
 
-<h3>Customer Care Hotline</h3>
+let categories=[];
 
-<p id="hotline">
+priceList.forEach(item=>{
 
-09XXXXXXXXX
+if(!categories.includes(item.category))
+categories.push(item.category);
 
-</p>
+});
 
-</div>
+let select=
+document.getElementById("category");
 
-<div>
+select.innerHTML=
+"<option>Select Category</option>";
 
-<h3>Email Address</h3>
+categories.forEach(cat=>{
 
-<p id="email">
+select.innerHTML+=
+`<option>${cat}</option>`;
 
-printing@gmail.com
+});
 
-</p>
+}
 
-</div>
+/* ======================== */
 
-<div>
+document
+.getElementById("category")
+.addEventListener("change",()=>{
 
-<h3>Facebook Page</h3>
+let cat=
+document.getElementById("category").value;
 
-<p>
+let services=
+document.getElementById("service");
 
-<a id="facebookLink"
-href="#"
-target="_blank"
-style="color:white;">
+services.innerHTML=
+"<option>Select Service</option>";
 
-Visit our Facebook Page
+priceList.forEach(item=>{
 
-</a>
+if(item.category==cat){
 
-</p>
+services.innerHTML+=
+`<option>${item.service}</option>`;
 
-</div>
+}
 
-<div>
+});
 
-<h3>Business Hours</h3>
+});
 
-<p>
+/* ======================== */
 
-Monday - Sunday<br>
+document
+.getElementById("service")
+.addEventListener("change",()=>{
 
-8:00 AM - 8:00 PM
+let cat=
+document.getElementById("category").value;
 
-</p>
+let service=
+document.getElementById("service").value;
 
-</div>
+let result=
+priceList.find(item=>
 
-</div>
+item.category==cat &&
+item.service==service
 
-<br><br>
+);
 
-<hr>
+if(result){
 
-<br>
+document.getElementById("price").value=
+result.price;
 
-<center>
+}
 
-<p>
+calculateTotal();
 
-© 2026 Printing Sales Calculator
+});
 
-<br>
-
-Powered by Google Sheets
-
-</p>
-
-</center>
-
-</footer>
-
-
-
-/* ====================== */
-
-document.getElementById("todayDate").innerHTML =
-new Date().toLocaleString();
-
-/* ====================== */
+/* ======================== */
 
 function calculateTotal(){
 
@@ -740,9 +468,11 @@ Number(document.getElementById("price").value);
 let discount=
 Number(document.getElementById("discount").value);
 
-let total=qty*price;
+let total=
+qty*price;
 
-total=total-(total*(discount/100));
+total=
+total-(total*(discount/100));
 
 document.getElementById("grandTotal").innerHTML=
 "₱"+total.toFixed(2);
@@ -753,7 +483,8 @@ document.getElementById("customer").value;
 document.getElementById("rService").innerHTML=
 document.getElementById("service").value;
 
-document.getElementById("rQty").innerHTML=qty;
+document.getElementById("rQty").innerHTML=
+qty;
 
 document.getElementById("rPrice").innerHTML=
 "₱"+price.toFixed(2);
@@ -761,9 +492,138 @@ document.getElementById("rPrice").innerHTML=
 document.getElementById("rTotal").innerHTML=
 "₱"+total.toFixed(2);
 
+return total;
+
 }
 
-/* ====================== */
+/* ======================== */
+
+async function saveSale(){
+
+let total=
+calculateTotal();
+
+let payload={
+
+orNo:
+document.getElementById("orNo").value,
+
+customer:
+document.getElementById("customer").value,
+
+category:
+document.getElementById("category").value,
+
+service:
+document.getElementById("service").value,
+
+qty:
+document.getElementById("qty").value,
+
+price:
+document.getElementById("price").value,
+
+total:
+total,
+
+payment:
+document.getElementById("payment").value
+
+};
+
+const res=
+await fetch(
+WEBAPP_URL+"?action=saveSale",
+{
+method:"POST",
+body:JSON.stringify(payload)
+}
+);
+
+const result=
+await res.json();
+
+if(result.status=="success"){
+
+alert("Sale saved.");
+
+loadDashboard();
+
+loadSales();
+
+generateOR();
+
+}
+
+}
+
+/* ======================== */
+
+async function loadSales(){
+
+const res=
+await fetch(
+WEBAPP_URL+"?action=getSales"
+);
+
+const sales=
+await res.json();
+
+let body=
+document.getElementById("salesBody");
+
+body.innerHTML="";
+
+sales.reverse().forEach(item=>{
+
+body.innerHTML+=`
+
+<tr>
+
+<td>${item.date}</td>
+<td>${item.time}</td>
+<td>${item.orNo}</td>
+<td>${item.customer}</td>
+<td>${item.service}</td>
+<td>${item.qty}</td>
+<td>₱${item.total}</td>
+<td>${item.payment}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+/* ======================== */
+
+async function loadDashboard(){
+
+const res=
+await fetch(
+WEBAPP_URL+"?action=getDashboard"
+);
+
+const data=
+await res.json();
+
+document.getElementById("todaySales").innerHTML=
+"₱"+data.todaySales;
+
+document.getElementById("monthlySales").innerHTML=
+"₱"+data.monthlySales;
+
+document.getElementById("transactions").innerHTML=
+data.transactions;
+
+document.getElementById("bestSeller").innerHTML=
+data.bestSeller;
+
+}
+
+/* ======================== */
 
 function printReceipt(){
 
@@ -771,681 +631,8 @@ window.print();
 
 }
 
-/* ====================== */
+</script>
 
-function saveSale(){
-
-alert("Google Sheets integration will be connected in Part 2.");
-
-}
-
-/* ====================== */
-
-document.getElementById("orNo").value=
-"OR-"+Date.now();
-
-  /*=========================================
-        PRINTING POS SYSTEM
-        PART 2A
-==========================================*/
-
-/*
-Replace this after deploying your
-Google Apps Script Web App
-*/
-
-const WEBAPP_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
-
-/*=========================================
-GLOBAL VARIABLES
-==========================================*/
-
-let priceList = [];
-let categoryList = [];
-
-/*=========================================
-PAGE LOAD
-==========================================*/
-
-window.onload = function () {
-
-    generateOR();
-
-    loadPriceList();
-
-}
-
-/*=========================================
-GENERATE OR NUMBER
-==========================================*/
-
-function generateOR(){
-
-    const d = new Date();
-
-    document.getElementById("orNo").value =
-        "OR" +
-        d.getFullYear() +
-        (d.getMonth()+1) +
-        d.getDate() +
-        "-" +
-        Date.now();
-
-}
-
-/*=========================================
-LOAD PRICE LIST
-==========================================*/
-
-async function loadPriceList(){
-
-    try{
-
-        const response = await fetch(
-
-            WEBAPP_URL + "?action=getPrices"
-
-        );
-
-        const data = await response.json();
-
-        priceList = data;
-
-        loadCategories();
-
-    }
-
-    catch(error){
-
-        console.log(error);
-
-        alert("Unable to load price list.");
-
-    }
-
-}
-
-/*=========================================
-LOAD CATEGORIES
-==========================================*/
-
-function loadCategories(){
-
-    let categories=[];
-
-    priceList.forEach(item=>{
-
-        if(!categories.includes(item.category))
-            categories.push(item.category);
-
-    });
-
-    categoryList=categories;
-
-    const select=document.getElementById("category");
-
-    select.innerHTML="";
-
-    let option=document.createElement("option");
-
-    option.text="Select Category";
-
-    option.value="";
-
-    select.appendChild(option);
-
-    categories.forEach(cat=>{
-
-        let op=document.createElement("option");
-
-        op.value=cat;
-
-        op.text=cat;
-
-        select.appendChild(op);
-
-    });
-
-}
-
-/*=========================================
-CATEGORY CHANGE
-==========================================*/
-
-document
-.getElementById("category")
-.addEventListener("change",loadServices);
-
-/*=========================================
-LOAD SERVICES
-==========================================*/
-
-function loadServices(){
-
-    const category=
-
-    document.getElementById("category").value;
-
-    const service=
-
-    document.getElementById("service");
-
-    service.innerHTML="";
-
-    let first=document.createElement("option");
-
-    first.text="Select Service";
-
-    first.value="";
-
-    service.appendChild(first);
-
-    priceList.forEach(item=>{
-
-        if(item.category==category){
-
-            let option=document.createElement("option");
-
-            option.value=item.service;
-
-            option.text=item.service;
-
-            service.appendChild(option);
-
-        }
-
-    });
-
-}
-
-/*=========================================
-SERVICE CHANGE
-==========================================*/
-
-document
-.getElementById("service")
-.addEventListener("change",loadPrice);
-
-/*=========================================
-LOAD PRICE
-==========================================*/
-
-function loadPrice(){
-
-    const category=
-
-    document.getElementById("category").value;
-
-    const service=
-
-    document.getElementById("service").value;
-
-    const result=
-
-    priceList.find(item=>
-
-        item.category==category &&
-
-        item.service==service
-
-    );
-
-    if(result){
-
-        document.getElementById("price").value=result.price;
-
-    }
-
-    else{
-
-        document.getElementById("price").value=0;
-
-    }
-
-    calculateTotal();
-
-}
-
-/*=========================================
-AUTO CALCULATE
-==========================================*/
-
-document
-.getElementById("qty")
-.addEventListener("input",calculateTotal);
-
-document
-.getElementById("discount")
-.addEventListener("input",calculateTotal);
-
-/*=========================================
-CALCULATE TOTAL
-==========================================*/
-
-function calculateTotal(){
-
-    let qty=
-
-    Number(document.getElementById("qty").value);
-
-    let price=
-
-    Number(document.getElementById("price").value);
-
-    let discount=
-
-    Number(document.getElementById("discount").value);
-
-    if(qty<1) qty=1;
-
-    if(discount<0) discount=0;
-
-    let subtotal=
-
-    qty*price;
-
-    let discountAmount=
-
-    subtotal*(discount/100);
-
-    let total=
-
-    subtotal-discountAmount;
-
-    document.getElementById("grandTotal").innerHTML=
-
-    "₱"+total.toFixed(2);
-
-    previewReceipt(total);
-
-}
-
-/*=========================================
-RECEIPT PREVIEW
-==========================================*/
-
-function previewReceipt(total){
-
-    document.getElementById("rCustomer").innerHTML=
-
-    document.getElementById("customer").value;
-
-    document.getElementById("rService").innerHTML=
-
-    document.getElementById("service").value;
-
-    document.getElementById("rQty").innerHTML=
-
-    document.getElementById("qty").value;
-
-    document.getElementById("rPrice").innerHTML=
-
-    "₱"+
-
-    Number(document.getElementById("price").value).toFixed(2);
-
-    document.getElementById("rTotal").innerHTML=
-
-    "₱"+total.toFixed(2);
-
-}
-
-/*=========================================
-PRINT RECEIPT
-==========================================*/
-
-function printReceipt(){
-
-    window.print();
-
-}
-
-/*=========================================
-SAVE SALE
-
-PART 2B
-==========================================*/
-
-function saveSale(){
-
-    alert("Coming in Part 2B");
-
-}
-      /*==================================================
-        DASHBOARD STATISTICS
-==================================================*/
-
-async function loadDashboard(){
-
-    try{
-
-        const response = await fetch(
-            WEBAPP_URL + "?action=getDashboard"
-        );
-
-        const dashboard = await response.json();
-
-        updateDashboard(dashboard);
-
-    }
-
-    catch(error){
-
-        console.log(error);
-
-    }
-
-}
-
-/*==================================================
-UPDATE DASHBOARD
-==================================================*/
-
-function updateDashboard(data){
-
-    document.getElementById("todaySales").innerHTML =
-        "₱" + Number(data.todaySales).toFixed(2);
-
-    document.getElementById("monthlySales").innerHTML =
-        "₱" + Number(data.monthlySales).toFixed(2);
-
-    document.getElementById("transactions").innerHTML =
-        data.transactions;
-
-    document.getElementById("bestSeller").innerHTML =
-        data.bestSeller;
-
-}
-
-/*==================================================
-AUTO REFRESH DASHBOARD
-==================================================*/
-
-window.addEventListener("load",()=>{
-
-    loadDashboard();
-
-});
-
-/*==================================================
-REFRESH EVERYTHING
-==================================================*/
-
-function refreshSystem(){
-
-    loadSales();
-
-    loadDashboard();
-
-}
-
-/*==================================================
-MODIFY saveSale()
-Replace ONLY the success block with this
-==================================================*/
-
-/*
-
-if(result.status=="success"){
-
-    alert("Sale successfully recorded.");
-
-    clearForm();
-
-    generateOR();
-
-    refreshSystem();
-
-}
-
-*/
-
-/*==================================================
-DISPLAY DATE AND TIME
-==================================================*/
-
-function updateClock(){
-
-    const now = new Date();
-
-    const options = {
-
-        year:"numeric",
-
-        month:"long",
-
-        day:"numeric",
-
-        hour:"2-digit",
-
-        minute:"2-digit",
-
-        second:"2-digit"
-
-    };
-
-    document.getElementById("todayDate").innerHTML =
-        now.toLocaleString("en-PH",options);
-
-}
-
-setInterval(updateClock,1000);
-
-updateClock();
-
-      /*==================================================
-        PAYMENT SUMMARY
-==================================================*/
-
-async function loadPaymentSummary(){
-
-    try{
-
-        const response = await fetch(
-            WEBAPP_URL + "?action=getPaymentSummary"
-        );
-
-        const summary = await response.json();
-
-        updatePaymentSummary(summary);
-
-    }
-
-    catch(error){
-
-        console.log(error);
-
-    }
-
-}
-
-/*==================================================
-UPDATE PAYMENT CARDS
-==================================================*/
-
-function updatePaymentSummary(summary){
-
-    document.getElementById("cashSales").innerHTML =
-        "₱" + Number(summary.cash || 0).toFixed(2);
-
-    document.getElementById("gcashSales").innerHTML =
-        "₱" + Number(summary.gcash || 0).toFixed(2);
-
-    document.getElementById("mayaSales").innerHTML =
-        "₱" + Number(summary.maya || 0).toFixed(2);
-
-    document.getElementById("bankSales").innerHTML =
-        "₱" + Number(summary.bank || 0).toFixed(2);
-
-}
-
-/*==================================================
-LOAD REPORTS
-==================================================*/
-
-async function loadReports(){
-
-    await Promise.all([
-
-        loadDashboard(),
-
-        loadPaymentSummary(),
-
-        loadSales()
-
-    ]);
-
-}
-
-/*==================================================
-REFRESH ENTIRE SYSTEM
-==================================================*/
-
-function refreshAll(){
-
-    loadReports();
-
-}
-
-/*==================================================
-AUTO LOAD
-==================================================*/
-
-window.addEventListener("load",()=>{
-
-    loadReports();
-
-});
-
-/*==================================================
-EXPORT SALES TO CSV
-==================================================*/
-
-function exportCSV(){
-
-    const table=document.getElementById("salesTable");
-
-    let csv=[];
-
-    for(let i=0;i<table.rows.length;i++){
-
-        let row=[];
-
-        for(let j=0;j<table.rows[i].cells.length;j++){
-
-            row.push(
-                '"' +
-                table.rows[i].cells[j].innerText +
-                '"'
-            );
-
-        }
-
-        csv.push(row.join(","));
-
-    }
-
-    const csvFile=new Blob(
-        [csv.join("\n")],
-        {type:"text/csv"}
-    );
-
-    const download=document.createElement("a");
-
-    download.download="Sales_Report.csv";
-
-    download.href=window.URL.createObjectURL(csvFile);
-
-    download.click();
-
-}
-
-/*==================================================
-PRINT SALES REPORT
-==================================================*/
-
-function printSales(){
-
-    const content=document.querySelector(".panel").innerHTML;
-
-    const win=window.open("","","width=900,height=700");
-
-    win.document.write("<html><head><title>Sales Report</title>");
-
-    win.document.write("</head><body>");
-
-    win.document.write(content);
-
-    win.document.write("</body></html>");
-
-    win.document.close();
-
-    win.print();
-
-}
-
-/*==================================================
-RESET REPORT
-==================================================*/
-
-function clearSearch(){
-
-    document.getElementById("searchCustomer").value="";
-
-    document.getElementById("searchDate").value="";
-
-    filterSales();
-
-}
-
-/*==================================================
-TOTAL SALES
-==================================================*/
-
-function computeGrandTotal(){
-
-    let total=0;
-
-    const rows=document.querySelectorAll("#salesBody tr");
-
-    rows.forEach(row=>{
-
-        const cells=row.getElementsByTagName("td");
-
-        if(cells.length>8){
-
-            const amount=parseFloat(
-
-                cells[8]
-                .innerText
-                .replace("₱","")
-                .replace(",","")
-
-            );
-
-            if(!isNaN(amount))
-                total+=amount;
-
-        }
-
-    });
-
-    console.log("Grand Total :",total);
-
-}
-
-/*==================================================
-AUTO REFRESH EVERY 60 SECONDS
-==================================================*/
-
-setInterval(()=>{
-
-    refreshAll();
-
-},60000);
-
-<script src="script.js"></script>
 </body>
 </html>
-
-
+```
